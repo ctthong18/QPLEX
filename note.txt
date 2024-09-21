@@ -1,0 +1,10 @@
+3 channels
+
+0: 0 for obstacles and cameras inside target range, 1 for target (1 point), 0.5 for other points
+1: camera regions (inside target range) - if camera cover target = 0, other points = 1
+2: probrability matrix
+
+note: if 2 target have overlap range, the 2 can share information
+
+
+model: PPO, DDPG
