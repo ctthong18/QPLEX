@@ -176,7 +176,7 @@ class AgentBase(ABC):  # pylint: disable=too-many-instance-attributes,too-many-p
         )
 
         self.action_space = copy.deepcopy(self.state.action_space)
-        self.action_space.seed(self.np_random.integers(np.iinfo(int).max))
+        self.action_space.seed(int(self.np_random.integers(np.iinfo(int).max)))
 
         self.episode_step = -1
         self._step_counter = 0

@@ -3,15 +3,14 @@ name = "mate"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
-    "gym==0.13.0",
+    "gymnasium>=1.2.0",
     "matplotlib>=3.10.6",
-    "pillow>=11.3.0",
-    "pygame>=2.6.0",
-    "pyyaml>=6.0.2",
-    "torch>=2.2.1",
-    "scikit-image>=0.24.0",
-    "jupyter>=1.1.1",
+    "pygame>=2.6.1",
     "pyglet==1.5.27",
+    "pyyaml>=6.0.2",
+    "scikit-image>=0.25.2",
+    "torch>=2.8.0",
+    "tqdm>=4.67.1",
 ]
