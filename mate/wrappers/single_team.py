@@ -155,7 +155,10 @@ class SingleTeamHelper(gym.Wrapper, metaclass=WrapperMeta):
         return self.num_opponents
 
     def reset(self, seed, options) -> Tuple[np.ndarray, np.ndarray]:
-        return self.swap(*self.env.reset(seed=seed, options=options))
+
+        obs, info = self.env.reset(seed=seed, options=options)
+
+        return self.swap(*obs), info
 
     def step(
         self, action: Tuple[np.ndarray, np.ndarray]
@@ -232,7 +235,8 @@ class SingleTeamMultiAgent(SingleTeamHelper):
         )
 
     def reset(self, seed=None, options=None) -> np.ndarray:
-        joint_observation, self.opponent_joint_observation = super().reset(seed=seed, options=options)
+
+        (joint_observation, self.opponent_joint_observation), info = super().reset(seed=seed, options=options)
 
         self.opponent_agents = list(self.opponent_agents_ordered)
         if self.unwrapped.shuffle_entities:
@@ -241,7 +245,7 @@ class SingleTeamMultiAgent(SingleTeamHelper):
         group_reset(self.opponent_agents, self.opponent_joint_observation)
         self.opponent_infos = None
 
-        return joint_observation
+        return joint_observation, info
 
     def send_messages(self, messages: Union[Message, Iterable[Message]]) -> None:
         """Buffer the messages from an agent to others in the same team.

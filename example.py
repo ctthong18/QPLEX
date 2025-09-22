@@ -13,16 +13,11 @@ def main():
 	base_env = gym.make('MultiAgentTracking-v0', config = "MATE-8v8-9.yaml")
 	# base_env = mate.RenderCommunication(base_env)
 
-	env = mate.MultiCamera(base_env, target_agent=GreedyTargetAgent())
-
-	# env: mate.MultiAgentTracking = mate.MultiTarget.make(base_env, camera_agent=GreedyCameraAgent())
+	env = mate.MultiCamera.make(base_env, target_agent=GreedyTargetAgent())
 
 	camera_agents = GreedyCameraAgent().spawn(env.unwrapped.num_cameras)
 
-
-	# target_agents = GreedyTargetAgent().spawn(env.unwrapped.num_targets)
-
-	camera_joint_observation = env.reset()
+	camera_joint_observation, _ = env.reset()
 
 	mate.group_reset(camera_agents, camera_joint_observation)
 	camera = None
