@@ -179,7 +179,7 @@ class SingleTeamHelper(gym.Wrapper, metaclass=WrapperMeta):
 
     # pylint: disable-next=missing-function-docstring
     def swap(self, *items) -> Union[Tuple[Any, Any], Tuple[Any, Any, Any, Any]]:
-        assert len(items) == 2 or len(items) == 4
+        assert len(items) == 2 or len(items) == 5
 
         if self.team is Team.CAMERA:
             return items
@@ -293,14 +293,15 @@ class SingleTeamMultiAgent(SingleTeamHelper):
         (
             (joint_observation, self.opponent_joint_observation),
             (reward, _),
-            done,
+            terminated,
+            truncated,
             (infos, self.opponent_infos),
         ) = super().step((np.asarray(action), np.asarray(opponent_joint_action)))
 
         if self.repeated_reward_individual_done:
-            done = done[0]
+            terminated = terminated[0]
 
-        return joint_observation, reward, done, infos
+        return joint_observation, reward, terminated, truncated, infos
 
     def seed(self, seed: Optional[int] = None) -> List[int]:
         seeds = self.env.seed(seed)

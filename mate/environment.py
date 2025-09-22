@@ -328,13 +328,21 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
     """The default configuration file."""
 
     # pylint: disable-next=too-many-statements
-    def __init__(self, config: Optional[Union[Dict[str, Any], str]] = None, **kwargs) -> None:
+    def __init__(self, config: Optional[Union[Dict[str, Any], str]] = None, render_mode: str = 'human', window_size: int = DEFAULT_WINDOW_SIZE, onetime_callbacks: Iterable[Callable[['MultiAgentTracking', str], None]] = (), **kwargs) -> None:
         """Initialize the Multi-Agent Tracking Environment from a dictionary
         mapping or a JSON/YAML file.
 
         Parameters:
             config (Optional[Union[Dict[str, Any], str]]): a dictionary mapping or a path to a readable JSON/YAML file
         """
+        if render_mode not in self.metadata['render.modes']:
+            raise ValueError(
+                f'Invalid render mode {render_mode}. '
+                f'Expect one of {self.metadata["render.modes"]}.'
+            )
+        self.render_mode = render_mode
+        self.window_size = window_size
+        self.onetime_callbacks = list(onetime_callbacks)
 
         if config is None:
             config = {} if len(kwargs) > 0 else self.DEFAULT_CONFIG_FILE
@@ -598,7 +606,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         environment's state.
 
         Accepts a tuple of cameras' joint action and targets' joint action,
-        and returns a tuple (observation, reward, done, info).
+        and returns a tuple (observation, reward, terminated, info).
 
         Parameters:
             action (Tuple[np.ndarray, np.ndarray]): a tuple of joint actions provided by the camera agents and the target agents
@@ -606,7 +614,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         Returns:
             observation (Tuple[np.ndarray, np.ndarray]): a tuple of agent's observation of the current environment
             reward (Tuple[float, float]): a tuple of the amount of reward returned after previous action
-            done (bool): whether the episode has ended, in which case further step() calls will return undefined results
+            terminated (bool): whether the episode has ended, in which case further step() calls will return undefined results
             info (Tuple[List[dict], List[dict]]): contains auxiliary diagnostic information (helpful for debugging, and sometimes learning)
         """  # pylint: disable=line-too-long
 
@@ -628,7 +636,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         self.tracked_steps += self.tracked_bits
 
         self.episode_step += 1
-        done = not (
+        terminated = not (
             self.episode_step <= self.max_episode_steps and self.awaiting_cargo_counts.any()
         )
 
@@ -672,7 +680,8 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         return (
             (camera_joint_observation, target_joint_observation),
             (camera_team_reward, target_team_reward),
-            done,
+            terminated,
+            False,
             (camera_infos, target_infos),
         )
 
@@ -986,9 +995,6 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
     # pylint: disable-next=arguments-differ,too-many-locals,too-many-branches,too-many-statements
     def render(
         self,
-        mode: str = 'human',
-        window_size: int = DEFAULT_WINDOW_SIZE,
-        onetime_callbacks: Iterable[Callable[['MultiAgentTracking', str], None]] = (),
     ) -> Union[bool, np.ndarray]:
         """Render the environment.
 
@@ -1002,19 +1008,15 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
           representing RGB values for an x-by-y pixel image, suitable
           for turning into a video.
 
-        Parameters:
-            mode (str): the mode to render with
-            window_size (int): the width and height of the render window (only valid for the first call)
-            onetime_callbacks (Iterable[callable]): callback functions for the rendering results
         """
 
-        if mode not in self.metadata['render.modes']:
-            return super().render(mode=mode)
+        if self.render_mode not in self.metadata['render.modes']:
+            return super().render(mode=self.render_mode)
 
         import mate.assets.pygletrendering as rendering  # pylint: disable=import-outside-toplevel
 
         if self.viewer is None:
-            self.viewer = rendering.Viewer(window_size, window_size)
+            self.viewer = rendering.Viewer(self.window_size, self.window_size)
             bound = 1.05 * consts.TERRAIN_SIZE
             self.viewer.set_bounds(-bound, bound, -bound, bound)
 
@@ -1174,11 +1176,11 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
                 new_image.transform.set_scale(0.4, 0.4)
                 self.viewer.add_onetime(new_image)
 
-        for callback in itertools.chain(self.render_callbacks.values(), onetime_callbacks):
-            callback(self, mode)
+        for callback in itertools.chain(self.render_callbacks.values(), self.onetime_callbacks):
+            callback(self, self.render_mode)
 
         # pylint: disable-next=superfluous-parens
-        return self.viewer.render(return_rgb_array=(mode == 'rgb_array'))
+        return self.viewer.render(return_rgb_array=(self.render_mode == 'rgb_array'))
 
     def add_render_callback(
         self, name: str, callback: Callable[['MultiAgentTracking', str], None]

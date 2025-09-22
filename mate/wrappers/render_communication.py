@@ -21,10 +21,10 @@ class RenderCommunication(gym.Wrapper, metaclass=WrapperMeta):
         super().__init__(env)
 
         self.duration = duration
-        self.camera_comm_matrix = np.zeros((env.num_cameras, env.num_cameras), dtype=np.int64)
-        self.target_comm_matrix = np.zeros((env.num_targets, env.num_targets), dtype=np.int64)
+        self.camera_comm_matrix = np.zeros((env.unwrapped.num_cameras, env.unwrapped.num_cameras), dtype=np.int64)
+        self.target_comm_matrix = np.zeros((env.unwrapped.num_targets, env.unwrapped.num_targets), dtype=np.int64)
 
-        self.add_render_callback('communication', self.callback)
+        self.unwrapped.add_render_callback('communication', self.callback)
 
     def load_config(self, config: Optional[Union[Dict[str, Any], str]] = None) -> None:
         """Reinitialize the Multi-Agent Tracking Environment from a dictionary mapping or a JSON/YAML file."""
