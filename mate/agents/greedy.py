@@ -186,7 +186,7 @@ class GreedyCameraAgent(CameraAgentBase):  # pylint: disable=too-many-instance-a
                         del content['target_states']
                 if len(content) > 0:
                     messages.append(self.pack_message(recipient=c, content=content))
-                    delay = self.np_random.randint(self.memory_period // 4, 2 * self.memory_period)
+                    delay = self.np_random.integers(self.memory_period // 4, 2 * self.memory_period)
                     self.communication_delay[c] = delay
 
             self.message2send.clear()

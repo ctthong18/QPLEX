@@ -5,7 +5,7 @@
 from typing import Optional, Tuple, Union
 
 import numpy as np
-from gym import spaces
+from gymnasium import spaces
 
 from mate.constants import (
     CAMERA_STATE_DIM_PRIVATE,

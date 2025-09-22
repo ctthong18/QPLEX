@@ -3,11 +3,12 @@
 import itertools
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from mate.agents.base import CameraAgentBase, TargetAgentBase
 from mate.utils import Message, Team
+from mate.environment import MultiAgentTracking
 
 # pylint: disable-next=cyclic-import
 from mate.wrappers.typing import (
@@ -95,9 +96,26 @@ def group_step(
 # pylint: disable-next=missing-class-docstring,too-many-instance-attributes
 class SingleTeamHelper(gym.Wrapper, metaclass=WrapperMeta):
     def __init__(self, env: BaseEnvironmentType, team: Team) -> None:
+        cur_env = env
+        while True:
+            if type(cur_env) is MultiAgentTracking:
+                break
+
+            if not hasattr(cur_env, 'env'):
+                break
+
+            cur_env = cur_env.env
+
+        env = cur_env
+
         assert_base_environment(env)
 
         super().__init__(env)
+
+        assert isinstance(env, MultiAgentTracking), (
+            f'You can only wrap a `mate.MultiAgentTracking` environment. '
+            f'Got env = {env}.'
+        )
 
         self.team = team
 
@@ -136,8 +154,8 @@ class SingleTeamHelper(gym.Wrapper, metaclass=WrapperMeta):
     def num_adversaries(self):  # pylint: disable=missing-function-docstring
         return self.num_opponents
 
-    def reset(self, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
-        return self.swap(*self.env.reset(**kwargs))
+    def reset(self, seed, options) -> Tuple[np.ndarray, np.ndarray]:
+        return self.swap(*self.env.reset(seed=seed, options=options))
 
     def step(
         self, action: Tuple[np.ndarray, np.ndarray]
@@ -169,6 +187,23 @@ class SingleTeamHelper(gym.Wrapper, metaclass=WrapperMeta):
             (item[1], item[0]) if isinstance(item, (tuple, list)) else item for item in items
         )
 
+    @classmethod
+    def make(cls, env: gym.Env, **kwargs) -> 'SingleTeamHelper':
+        wrappers = []
+        cur_env = env
+        while True:
+            if not isinstance(cur_env, gym.Wrapper):
+                break
+
+            wrappers.append(cur_env.__class__)
+            cur_env = cur_env.env
+
+        cur_env = cls(env, **kwargs)
+
+        for i in range(len(wrappers)-1, -1, -1):
+            cur_env = wrappers[i](cur_env)
+
+        return cur_env
 
 class SingleTeamMultiAgent(SingleTeamHelper):
     """Wrap the environment into a single-team multi-agent environment that
@@ -196,11 +231,11 @@ class SingleTeamMultiAgent(SingleTeamHelper):
             self, self.env, team=self.team, opponent_agent=self.opponent_agent
         )
 
-    def reset(self, **kwargs) -> np.ndarray:
-        joint_observation, self.opponent_joint_observation = super().reset(**kwargs)
+    def reset(self, seed=None, options=None) -> np.ndarray:
+        joint_observation, self.opponent_joint_observation = super().reset(seed=seed, options=options)
 
         self.opponent_agents = list(self.opponent_agents_ordered)
-        if self.shuffle_entities:
+        if self.unwrapped.shuffle_entities:
             self.np_random.shuffle(self.opponent_agents)
 
         group_reset(self.opponent_agents, self.opponent_joint_observation)
@@ -350,8 +385,8 @@ class SingleTeamSingleAgent(SingleTeamHelper):  # pylint: disable=too-many-insta
             opponent_agent=self.opponent_agent,
         )
 
-    def reset(self, **kwargs) -> np.ndarray:
-        self.joint_observation, self.opponent_joint_observation = super().reset(**kwargs)
+    def reset(self, seed, options) -> np.ndarray:
+        self.joint_observation, self.opponent_joint_observation = super().reset(seed=seed, options=options)
 
         self.opponent_agents = list(self.opponent_agents_ordered)
         if self.shuffle_entities:

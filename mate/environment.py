@@ -20,10 +20,11 @@ from typing import (
     Union,
 )
 
-import gym
 import numpy as np
-from gym import spaces
-from gym.utils import EzPickle, seeding
+
+import gymnasium as gym
+from gymnasium import spaces
+from gymnasium.utils import EzPickle, seeding
 
 from mate import constants as consts
 from mate.entities import Camera, Obstacle, Target
@@ -118,9 +119,9 @@ def read_config(
     if isinstance(config_or_path, str) and not os.path.exists(config_or_path):
         for candidate in (Path(os.getcwd()) / config_or_path, ASSETS_DIR / config_or_path):
             if candidate.is_file():
-                gym.logger.info(
-                    'Found configuration file "%s" in assets directory.', config_or_path
-                )
+                # gym.logger.info(
+                #     'Found configuration file "%s" in assets directory.', config_or_path
+                # )
                 config_or_path = candidate
                 break
         else:
@@ -676,7 +677,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         )
 
     # pylint: disable-next=arguments-differ,too-many-locals,too-many-branches,too-many-statements
-    def reset(self, *, seed: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
+    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None) -> Tuple[np.ndarray, np.ndarray]:
         """Resets the environment to an initial state and returns an initial
         observation. The entities (cameras, targets and obstacles) may be
         shuffled if not explicitly disabled in configuration.
@@ -1222,7 +1223,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         for entity in itertools.chain(
             self.cameras_ordered, self.targets_ordered, self.obstacles_ordered
         ):
-            seeds.append(entity.seed(self.np_random.randint(int_max))[0])
+            seeds.append(entity.seed(int(self.np_random.integers(int_max))))
 
         return seeds
 

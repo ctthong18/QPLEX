@@ -3,7 +3,7 @@
 import heapq
 from typing import Callable, Iterable, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from mate.utils import Message

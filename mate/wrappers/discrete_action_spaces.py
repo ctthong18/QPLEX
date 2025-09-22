@@ -2,9 +2,9 @@
 
 from typing import Any, Dict, Optional, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
-from gym import spaces
+from gymnasium import spaces
 
 from mate import constants as consts
 from mate.wrappers.typing import BaseEnvironmentType, WrapperMeta, assert_base_environment

@@ -2,7 +2,7 @@
 
 from typing import List, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from mate.utils import Team

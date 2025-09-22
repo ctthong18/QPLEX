@@ -3,7 +3,7 @@
 from functools import partial
 from typing import Callable, Iterable, Union
 
-import gym
+import gymnasium as gym
 
 from mate.utils import Message
 from mate.wrappers.typing import MateEnvironmentType, WrapperMeta, assert_mate_environment

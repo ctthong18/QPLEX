@@ -2,7 +2,7 @@
 
 from typing import Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from mate.agents.utils import convert_coordinates

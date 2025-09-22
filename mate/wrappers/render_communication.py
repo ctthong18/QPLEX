@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from mate import constants as consts

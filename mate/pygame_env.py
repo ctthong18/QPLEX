@@ -20,10 +20,10 @@ from typing import (
     Union,
 )
 
-import gym
+import gymnasium as gym
 import numpy as np
-from gym import spaces
-from gym.utils import EzPickle, seeding
+from gymnasium import spaces
+from gymnasium.utils import EzPickle, seeding
 
 from mate import constants as consts
 from mate.entities import Camera, Obstacle, Target
