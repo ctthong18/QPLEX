@@ -318,7 +318,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
     """
 
     metadata = {
-        'render.modes': ['human', 'rgb_array'],
+        'render.modes': ['human', 'rgb_array', 'numpy_array'],
         'video.frames_per_second': 60,
         'video.output_frames_per_second': 60,
     }
@@ -987,8 +987,8 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         self,
         mode: str = 'human',
         window_size: int = DEFAULT_WINDOW_SIZE,
-        onetime_callbacks: Iterable[Callable[['MultiAgentTracking', str], None]] = (),
-    ) -> Union[bool, np.ndarray]:
+        onetime_callbacks: Iterable[Callable[['MultiAgentTracking', str], None]] = ()
+    ) -> tuple[np.ndarray, bool]:
         """Render the environment.
 
         The set of supported modes varies per environment. (And some
@@ -1010,7 +1010,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
         if mode not in self.metadata['render.modes']:
             return super().render(mode=mode)
 
-        import mate.assets.pygletrendering as rendering  # pylint: disable=import-outside-toplevel
+        import mate.assets.pygamerendering as rendering  # pylint: disable=import-outside-toplevel
 
         if self.viewer is None:
             self.viewer = rendering.Viewer(window_size, window_size)
@@ -1029,6 +1029,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
                     1.8 * consts.WAREHOUSE_RADIUS,
                 )
                 self.viewer.warehouse_images[key] = image
+
 
         if len(self.viewer.geoms) == 0:
             margin = rendering.make_polygon(
@@ -1051,6 +1052,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
                 image.add_attr(image.transform)
                 self.viewer.warehouse.append(image)
                 self.viewer.add_geom(image)
+
 
             self.viewer.obstacles = []
             for obstacle in self.obstacles:
@@ -1079,41 +1081,42 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
                 image.add_attr(image.transform)
                 self.viewer.cameras.append(image)
 
-            self.viewer.targets = []
-            self.viewer.markers = []
-            for capacity, target in zip(self.target_capacities, self.targets):
-                if capacity == 1:
-                    image = rendering.make_polygon(
-                        TARGET_RENDER_RADIUS
-                        * np.array(
-                            [
-                                (1.0, 0.0),
-                                (-0.2, 0.6),
-                                (-0.8, 0.6),
-                                (-0.4, 0.0),
-                                (-0.8, -0.6),
-                                (-0.2, -0.6),
-                            ]
-                        )
+        self.viewer.targets = []
+        self.viewer.markers = []
+        for capacity, target in zip(self.target_capacities, self.targets):
+            if capacity == 1:
+                image = rendering.make_polygon(
+                    TARGET_RENDER_RADIUS
+                    * np.array(
+                        [
+                            (1.0, 0.0),
+                            (-0.2, 0.6),
+                            (-0.8, 0.6),
+                            (-0.4, 0.0),
+                            (-0.8, -0.6),
+                            (-0.2, -0.6),
+                        ]
                     )
-                else:
-                    image = rendering.make_polygon(
-                        TARGET_RENDER_RADIUS
-                        * np.array([(1.0, 0.0), (0.3, 0.6), (-0.8, 0.6), (-0.8, -0.6), (0.3, -0.6)])
-                    )
-
-                image.transform = rendering.Transform(translation=target.location)
-                image.add_attr(image.transform)
-
-                marker = rendering.make_circle(
-                    radius=1.2 * TARGET_RENDER_RADIUS, res=15, filled=True
                 )
-                marker.transform = rendering.Transform(translation=target.location)
-                marker.add_attr(marker.transform)
-                marker.set_color(*target.COLOR_TRACKED)
+            else:
+                image = rendering.make_polygon(
+                    TARGET_RENDER_RADIUS
+                    * np.array([(1.0, 0.0), (0.3, 0.6), (-0.8, 0.6), (-0.8, -0.6), (0.3, -0.6)])
+                )
 
-                self.viewer.targets.append(image)
-                self.viewer.markers.append(marker)
+            image.transform = rendering.Transform(translation=target.location)
+            image.add_attr(image.transform)
+
+            marker = rendering.make_circle(
+                radius=1.2 * TARGET_RENDER_RADIUS, res=15, filled=True
+            )
+            marker.transform = rendering.Transform(translation=target.location)
+            marker.add_attr(marker.transform)
+            marker.set_color(*target.COLOR_TRACKED)
+
+            self.viewer.targets.append(image)
+            self.viewer.markers.append(marker)
+
 
         remaining_cargo_counts = self.remaining_cargoes.sum(axis=-1)
         for w, color in enumerate(WAREHOUSE_COLORS):
@@ -1138,13 +1141,15 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
 
             polygon = rendering.make_polygon(vertices, filled=True)
             sector = rendering.make_polygon(boundary, filled=True)
+
             if self.camera_target_view_mask[c].any():
                 polygon.set_color(0.0, 0.6, 0.0, 0.25)
             else:
                 polygon.set_color(0.6, 0.6, 0.0, 0.25)
+
             sector.set_color(0.0, 0.6, 0.8, 0.1)
             self.viewer.add_onetime(sector)
-            self.viewer.add_onetime(polygon)
+            # self.viewer.add_onetime(polygon)
 
         for c, (camera, image) in enumerate(zip(self.cameras, self.viewer.cameras)):
             perceived_by_targets = self.target_camera_view_mask[:, c].any()
@@ -1167,17 +1172,252 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
             image.transform.set_translation(*target.location)
             image.transform.set_rotation(np.deg2rad(self.target_orientations[t]))
             self.viewer.add_onetime(image)
+
             if goal >= 0 and self.bounties[t] == 0:
                 new_image = copy.deepcopy(image)
                 new_image.set_color(1.0, 1.0, 1.0, 0.66)
                 new_image.transform.set_scale(0.4, 0.4)
                 self.viewer.add_onetime(new_image)
 
+
         for callback in itertools.chain(self.render_callbacks.values(), onetime_callbacks):
             callback(self, mode)
 
         # pylint: disable-next=superfluous-parens
         return self.viewer.render(return_rgb_array=(mode == 'rgb_array'))
+
+    def render(
+        self,
+        mode: str = 'human',
+        window_size: int = DEFAULT_WINDOW_SIZE,
+        onetime_callbacks: Iterable[Callable[['MultiAgentTracking', str], None]] = ()
+    ) -> np.ndarray | bool:
+        """Render the environment.
+
+        The set of supported modes varies per environment. (And some
+        environments do not support rendering at all.) By convention,
+        if mode is:
+
+        - human: render to the current display or terminal and return nothing.
+          Usually for human consumption.
+        - rgb_array: Return an numpy.ndarray with shape (x, y, 3),
+          representing RGB values for an x-by-y pixel image, suitable
+          for turning into a video.
+
+        Parameters:
+            mode (str): the mode to render with
+            window_size (int): the width and height of the render window (only valid for the first call)
+            onetime_callbacks (Iterable[callable]): callback functions for the rendering results
+        """
+
+        if mode not in self.metadata['render.modes']:
+            return super().render(mode=mode)
+
+        import mate.assets.pygletrendering as rendering  # pylint: disable=import-outside-toplevel
+
+        if self.viewer is None:
+            self.viewer = rendering.Viewer(window_size, window_size, mode)
+            bound = 1.05 * consts.TERRAIN_SIZE
+            self.viewer.set_bounds(-bound, bound, -bound, bound)
+
+            self.viewer.warehouse_images: dict[tuple[bool, bool], rendering.Image] = {}
+            for key in ((True, True), (True, False), (False, True), (False, False)):
+                # base = rendering.make_polygon(
+                #     consts.WAREHOUSE_RADIUS
+                #     * np.array([(1.0, 1.0), (-1.0, 1.0), (-1.0, -1.0), (1.0, -1.0)])
+                # )
+                image = rendering.Image(
+                    ASSETS_DIR / 'images' / f'warehouse-{key[0]:d}{key[1]:d}.png',
+                    1.8 * consts.WAREHOUSE_RADIUS,
+                    1.8 * consts.WAREHOUSE_RADIUS,
+                )
+                self.viewer.warehouse_images[key] = image
+
+
+        if len(self.viewer.geoms) == 0:
+            margin = rendering.make_polygon(
+                consts.TERRAIN_SIZE * np.array([[1, 1], [-1, 1], [-1, -1], [1, -1]]), filled=False
+            )
+            margin.set_linewidth(3)
+            self.viewer.add_geom(margin)
+
+            self.viewer.warehouse: list[rendering.Compound] = []
+            for color, warehouse in zip(WAREHOUSE_COLORS, consts.WAREHOUSES):
+                base = rendering.make_polygon(
+                    consts.WAREHOUSE_RADIUS
+                    * np.array([(1.0, 1.0), (-1.0, 1.0), (-1.0, -1.0), (1.0, -1.0)])
+                )
+                # print(self.viewer.warehouse_images[(True, True)].transform.translation)
+                image = rendering.Compound([base, self.viewer.warehouse_images[(True, True)]])
+                # image = base
+                base.reset()
+
+                # print(color)
+
+                base.set_color(*color)
+
+                # base.add_transform(rendering.Transform(translation=warehouse))
+                # print(warehouse)
+                # image.reset()
+                # base.attrs[:] = [base.color]
+                image.base = base
+                # image.transform = rendering.Transform(translation=warehouse)
+                image.add_transform(rendering.Transform(translation=warehouse))
+                # image.add_attr(image.transform)
+                self.viewer.warehouse.append(image)
+                # self.viewer.add_geom(image.base)
+                self.viewer.add_geom(image)
+
+        # return self.viewer.render()
+
+            self.viewer.obstacles = []
+            for obstacle in self.obstacles:
+                image = rendering.make_circle(radius=obstacle.radius, res=72, filled=True)
+                image.add_transform(rendering.Transform(translation=obstacle.location))
+                image.set_color(*obstacle.COLOR)
+                self.viewer.obstacles.append(image)
+                self.viewer.add_geom(image)
+
+            self.viewer.cameras: list[rendering.Geom] = []
+            for c, camera in enumerate(self.cameras):
+                base = rendering.make_circle(radius=camera.radius, res=72, filled=True)
+                body = rendering.make_polygon(
+                    camera.radius * np.array([(0.8, 0.6), (-0.8, 0.6), (-0.8, -0.6), (0.8, -0.6)])
+                )
+                lens = rendering.make_polygon(
+                    camera.radius * np.array([(0.7, 0.3), (1.2, 0.3), (1.2, -0.3), (0.7, -0.3)])
+                )
+                image = rendering.Compound([base, body, lens])
+                # image = base
+                image.reset()
+                for geom in image.gs:
+                    geom.reset()
+                    # geom.attrs[:] = [geom.color]
+                body.set_color(1.0, 1.0, 1.0, 0.75)
+                lens.set_color(0.1, 0.1, 0.1, 0.75)
+                image.base = base
+                # image.transform = rendering.Transform(translation=camera.location)
+                image.add_transform(rendering.Transform(translation=camera.location))
+                # image.add_attr(image.transform)
+                self.viewer.cameras.append(image)
+
+                self.viewer.targets: list[rendering.Geom] = []
+                self.viewer.markers: list[rendering.Geom] = []
+                for capacity, target in zip(self.target_capacities, self.targets):
+                    if capacity == 1:
+                        image = rendering.make_polygon(
+                            TARGET_RENDER_RADIUS
+                            * np.array(
+                                [
+                                    (1.0, 0.0),
+                                    (-0.2, 0.6),
+                                    (-0.8, 0.6),
+                                    (-0.4, 0.0),
+                                    (-0.8, -0.6),
+                                    (-0.2, -0.6),
+                                ]
+                            )
+                        )
+                    else:
+                        image = rendering.make_polygon(
+                            TARGET_RENDER_RADIUS
+                            * np.array([(1.0, 0.0), (0.3, 0.6), (-0.8, 0.6), (-0.8, -0.6), (0.3, -0.6)])
+                        )
+
+                    # image.transform = rendering.Transform(translation=target.location)
+                    image.add_transform(rendering.Transform(translation=target.location))
+                    # image.add_attr(image.transform)
+
+                    marker = rendering.make_circle(
+                        radius=1.2 * TARGET_RENDER_RADIUS, res=15, filled=True
+                    )
+                    # marker.transform = rendering.Transform(translation=target.location)
+                    marker.add_transform(rendering.Transform(translation=target.location))
+                    # marker.add_attr(marker.transform)
+                    marker.set_color(*target.COLOR_TRACKED)
+
+                    self.viewer.targets.append(image)
+                    self.viewer.markers.append(marker)
+
+        # return self.viewer.render()
+
+        remaining_cargo_counts = self.remaining_cargoes.sum(axis=-1)
+        for w, color in enumerate(WAREHOUSE_COLORS):
+            remaining, awaiting = (remaining_cargo_counts[w] > 0, self.awaiting_cargo_counts[w] > 0)
+
+            warehouse = self.viewer.warehouse[w]
+            if warehouse.gs[-1] != self.viewer.warehouse_images[(remaining, awaiting)]:
+                warehouse.gs[-1] = self.viewer.warehouse_images[(remaining, awaiting)]
+                warehouse.base.set_alpha(0.6 if remaining or awaiting else 0.3)
+
+                self.viewer.update_geom(warehouse)
+
+            # self.viewer.add_onetime(warehouse)
+            # warehouse.base.set_color(
+            #     *warehouse.base.color.vec4[:3], (0.6 if remaining or awaiting else 0.3)
+            # )
+
+        for c, camera in enumerate(self.cameras):
+            camera: Camera
+            phis, rhos = camera.boundary_between(
+                camera.orientation - camera.viewing_angle / 2.0,
+                camera.orientation + camera.viewing_angle / 2.0,
+            )
+            rhos = rhos.clip(min=camera.radius, max=camera.sight_range)
+            vertices = polar2cartesian(rhos, phis).transpose()
+            vertices = camera.location + np.concatenate([[[0.0, 0.0]], vertices, [[0.0, 0.0]]])
+            boundary = polar2cartesian(camera.sight_range, phis).transpose()
+            boundary = camera.location + np.concatenate([[[0.0, 0.0]], boundary, [[0.0, 0.0]]])
+
+            polygon = rendering.make_polygon(vertices, filled=True)
+            sector = rendering.make_polygon(boundary, filled=True)
+
+            if self.camera_target_view_mask[c].any():
+                polygon.set_color(0.0, 0.6, 0.0, 0.25)
+            else:
+                polygon.set_color(0.6, 0.6, 0.0, 0.25)
+
+            sector.set_color(0.0, 0.6, 0.8, 0.1)
+            self.viewer.add_onetime(polygon)
+            self.viewer.add_onetime(sector)
+
+        for c, (camera, image) in enumerate(zip(self.cameras, self.viewer.cameras)):
+            perceived_by_targets = self.target_camera_view_mask[:, c].any()
+
+            image.base.set_color(
+                *(Camera.COLOR_PERCEIVED if perceived_by_targets else Camera.COLOR_UNPERCEIVED)
+            )
+            image.transform.set_rotation(np.deg2rad(camera.orientation))
+            self.viewer.add_onetime(image)
+
+        for t in np.flatnonzero(self.tracked_bits):
+            marker = self.viewer.markers[t]
+            marker.transform.set_translation(*self.targets[t].location)
+            self.viewer.add_onetime(marker)
+
+        for t, (goal, target, image) in enumerate(
+            zip(self.target_goals, self.targets, self.viewer.targets)
+        ):
+            image.set_color(*(WAREHOUSE_COLORS[goal] if goal >= 0 else target.COLOR_NO_LOAD))
+            image.transform.set_translation(*target.location)
+            image.transform.set_rotation(np.deg2rad(self.target_orientations[t]))
+
+            if goal >= 0 and self.bounties[t] == 0:
+                new_image = copy.deepcopy(image)
+                new_image.set_color(1.0, 1.0, 1.0, 0.66)
+                # print(t)
+                new_image.transform.set_scale(0.4, 0.4)
+                self.viewer.add_onetime(new_image)
+            else:
+                self.viewer.add_onetime(image)
+
+
+
+        for callback in itertools.chain(self.render_callbacks.values(), onetime_callbacks):
+            callback(self, mode)
+
+        # pylint: disable-next=superfluous-parens
+        return self.viewer.render()
 
     def add_render_callback(
         self, name: str, callback: Callable[['MultiAgentTracking', str], None]
@@ -1186,6 +1426,7 @@ class MultiAgentTracking(gym.Env, EzPickle, metaclass=EnvMeta):
 
         This is useful to add additional elements to the rendering results.
         """
+
 
         self.render_callbacks[name] = callback
 

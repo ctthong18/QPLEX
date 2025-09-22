@@ -582,7 +582,7 @@ class Target(Sensor):  # pylint: disable=too-many-instance-attributes
         self.obstacles = []
         self.capacity = 1
         self.goal_bits = np.zeros(consts.NUM_WAREHOUSES, dtype=np.int64)
-        self.empty_bits = np.zeros(consts.NUM_WAREHOUSES, dtype=np.bool8)
+        self.empty_bits = np.zeros(consts.NUM_WAREHOUSES, dtype=np.bool_)
 
         self.is_colliding = False
 

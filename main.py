@@ -15,9 +15,9 @@ MAX_EPISODE_STEPS = 4000
 
 
 def main():
-	base_env = mate.make('MultiAgentTracking-v0', config = "MATE-8v8-9.yaml")
+	base_env = gym.make('MultiAgentTracking-v0', config = "MATE-8v8-9.yaml")
 	# base_env = mate.RenderCommunication(base_env)
-	
+
 	# env = mate.MultiCamera(base_env, target_agent=GreedyTargetAgent())
 
 	env: mate.MultiAgentTracking = mate.MultiTarget(base_env, camera_agent=GreedyCameraAgent())
@@ -28,7 +28,7 @@ def main():
 	target_agents = GreedyTargetAgent().spawn(env.num_targets)
 
 	print(target_agents[0])
-	
+
 
 
 	target_joint_observation = env.reset()
@@ -40,7 +40,7 @@ def main():
 	run = True
 
 	t = []
-	
+
 	for i in range(MAX_EPISODE_STEPS):
 
 		target_joint_action = mate.group_step(
@@ -48,7 +48,7 @@ def main():
 		)
 
 		results = env.step(target_joint_action)
-		
+
 		target_joint_observation, target_team_reward, done, target_info = results
 
 		run = env.render()
@@ -59,7 +59,7 @@ def main():
 		# arr: np.ndarray
 
 		# a = input()
-		
+
 
 		if not run or done:
 			env.close()

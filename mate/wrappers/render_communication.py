@@ -86,8 +86,7 @@ class RenderCommunication(gym.Wrapper, metaclass=WrapperMeta):
                 lines.append(rendering.Line(end - vec2, end))
 
             for line in lines:
-                line.add_attr(rendering.LineStyle(0x0F0F))
-                line.linewidth.stroke = 2.5
+                line.width = 2.5
                 line.set_color(*color)
                 geoms.append(line)
 

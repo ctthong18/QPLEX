@@ -376,26 +376,26 @@ def camera_coordinate_mask_of(num_cameras: int, num_targets: int, num_obstacles:
     is a coordinate value (exclude the current target itself).
     """
 
-    preserved_mask = np.zeros(PRESERVED_DIM, dtype=np.bool8)
+    preserved_mask = np.zeros(PRESERVED_DIM, dtype=np.bool_)
     preserved_mask[-1 - 2 * NUM_WAREHOUSES : -1] = True  # the warehouse locations
 
-    camera_mask = np.zeros(CAMERA_STATE_DIM_PRIVATE, dtype=np.bool8)
+    camera_mask = np.zeros(CAMERA_STATE_DIM_PRIVATE, dtype=np.bool_)
 
-    target_mask = np.zeros(TARGET_STATE_DIM_PUBLIC + 1, dtype=np.bool8)
+    target_mask = np.zeros(TARGET_STATE_DIM_PUBLIC + 1, dtype=np.bool_)
     target_mask[:2] = True  # first two elements (x, y)
     target_mask = np.tile(target_mask, reps=num_targets)
 
-    obstacle_mask = np.zeros(OBSTACLE_STATE_DIM + 1, dtype=np.bool8)
+    obstacle_mask = np.zeros(OBSTACLE_STATE_DIM + 1, dtype=np.bool_)
     obstacle_mask[:2] = True  # first two elements (x, y)
     obstacle_mask = np.tile(obstacle_mask, reps=num_obstacles)
 
-    other_camera_mask = np.zeros(CAMERA_STATE_DIM_PUBLIC + 1, dtype=np.bool8)
+    other_camera_mask = np.zeros(CAMERA_STATE_DIM_PUBLIC + 1, dtype=np.bool_)
     other_camera_mask[:2] = True  # first two elements (x, y)
     other_camera_mask = np.tile(other_camera_mask, reps=num_cameras)
 
     return np.concatenate(
         [preserved_mask, camera_mask, target_mask, obstacle_mask, other_camera_mask]
-    ).astype(np.bool8)
+    ).astype(np.bool_)
 
 
 @functools.lru_cache(maxsize=None)
@@ -405,26 +405,26 @@ def target_coordinate_mask_of(num_cameras: int, num_targets: int, num_obstacles:
     is a coordinate value (exclude the current target itself).
     """
 
-    preserved_mask = np.zeros(PRESERVED_DIM, dtype=np.bool8)
+    preserved_mask = np.zeros(PRESERVED_DIM, dtype=np.bool_)
     preserved_mask[-1 - 2 * NUM_WAREHOUSES : -1] = True  # the warehouse locations
 
-    target_mask = np.zeros(TARGET_STATE_DIM_PRIVATE, dtype=np.bool8)
+    target_mask = np.zeros(TARGET_STATE_DIM_PRIVATE, dtype=np.bool_)
 
-    camera_mask = np.zeros(CAMERA_STATE_DIM_PUBLIC + 1, dtype=np.bool8)
+    camera_mask = np.zeros(CAMERA_STATE_DIM_PUBLIC + 1, dtype=np.bool_)
     camera_mask[:2] = True  # first two elements (x, y)
     camera_mask = np.tile(camera_mask, reps=num_cameras)
 
-    obstacle_mask = np.zeros(OBSTACLE_STATE_DIM + 1, dtype=np.bool8)
+    obstacle_mask = np.zeros(OBSTACLE_STATE_DIM + 1, dtype=np.bool_)
     obstacle_mask[:2] = True  # first two elements (x, y)
     obstacle_mask = np.tile(obstacle_mask, reps=num_obstacles)
 
-    other_target_mask = np.zeros(TARGET_STATE_DIM_PUBLIC + 1, dtype=np.bool8)
+    other_target_mask = np.zeros(TARGET_STATE_DIM_PUBLIC + 1, dtype=np.bool_)
     other_target_mask[:2] = True  # first two elements (x, y)
     other_target_mask = np.tile(other_target_mask, reps=num_targets)
 
     return np.concatenate(
         [preserved_mask, target_mask, camera_mask, obstacle_mask, other_target_mask]
-    ).astype(np.bool8)
+    ).astype(np.bool_)
 
 
 @functools.lru_cache(maxsize=None)

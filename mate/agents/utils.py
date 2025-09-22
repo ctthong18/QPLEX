@@ -61,9 +61,9 @@ def convert_coordinates(
         teammate_state_dim, opponent_state_dim = CAMERA_STATE_DIM_PUBLIC, TARGET_STATE_DIM_PUBLIC
     else:
         teammate_state_dim, opponent_state_dim = TARGET_STATE_DIM_PUBLIC, CAMERA_STATE_DIM_PUBLIC
-    opponent_view_mask = converted[..., slices['opponent_mask']].astype(np.bool8)
-    obstacle_view_mask = converted[..., slices['obstacle_mask']].astype(np.bool8)
-    teammate_view_mask = converted[..., slices['teammate_mask']].astype(np.bool8)
+    opponent_view_mask = converted[..., slices['opponent_mask']].astype(np.bool_)
+    obstacle_view_mask = converted[..., slices['obstacle_mask']].astype(np.bool_)
+    teammate_view_mask = converted[..., slices['teammate_mask']].astype(np.bool_)
     view_mask = np.hstack(
         [
             np.repeat(opponent_view_mask, repeats=opponent_state_dim + 1, axis=-1),
@@ -287,7 +287,7 @@ class TargetStatePublic(StateBase):
     @property
     def is_loaded(self) -> Union[bool, np.ndarray]:
         if self._is_loaded is None:
-            self._is_loaded = self.state[..., 3].astype(np.bool8)
+            self._is_loaded = self.state[..., 3].astype(np.bool_)
             if self._is_loaded.ndim == 0:
                 self._is_loaded = bool(self._is_loaded)
         return self._is_loaded
@@ -326,7 +326,7 @@ class TargetStatePrivate(StateBase):
     def empty_bits(self) -> np.ndarray:
         if self._empty_bits is None:
             self._empty_bits = self.state[..., 6 + NUM_WAREHOUSES : 6 + 2 * NUM_WAREHOUSES].astype(
-                np.bool8
+                np.bool_
             )
         return self._empty_bits
 

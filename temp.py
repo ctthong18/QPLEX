@@ -132,13 +132,13 @@ class Viewer:
             geom.add_transform(self.transform)
             geom.render(self.screen)
             geom.sub_transform(self.transform)
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.isopen = False
-        
+
         # self.screen.blit(self.window, (0, 0))
-        
+
         pygame.display.flip()
 
         return self.isopen
@@ -201,10 +201,10 @@ class Geom:
         self.render1(s)
 
         # pygame.draw.polygon(s, self.color, V, self.linewidth, **self.attrs)
-        
+
         if self.transform.scale[0] != 1 or self.transform.scale[1] != 1:
             s = pygame.transform.scale_by(s, self.transform.scale)
-        
+
         if self.transform.rotation != 0:
             s = pygame.transform.rotate(s, self.transform.rotation)
 
@@ -232,21 +232,21 @@ class Geom:
         b = self.toRGB(b)
         a = self.toRGB(a)
         self.color.update(r, g, b, a)
-    
+
     def set_alpha(self, a=1):
         a = self.toRGB(a)
         self.color.a = a
 
-    
+
     @staticmethod
     def toRGB(value):
         if value <= 1 and type(value) == float:
             return int(value*255)
         return value
-    
+
     def add_transform(self, transform):
         self.transform.add(transform)
-    
+
     def sub_transform(self, transform):
         self.transform.sub(transform)
 
@@ -280,17 +280,17 @@ class Transform(Attr):
     def set_scale(self, newx, newy):
         self.scale = (float(newx), float(newy))
 
-    
+
     def add(self, transform):
         self.set_translation(self.translation[0] + transform.translation[0], self.translation[1] + transform.translation[1])
         self.set_rotation(self.rotation + transform.rotation)
         self.set_scale(self.scale[0] * transform.scale[0], self.scale[1] * transform.scale[1])
-    
+
     def sub(self, transform):
         self.set_translation(self.translation[0] - transform.translation[0], self.translation[1] - transform.translation[1])
         self.set_rotation(self.rotation - transform.rotation)
         self.set_scale(self.scale[0] / transform.scale[0], self.scale[1] / transform.scale[1])
-    
+
 
 class Point(Geom):
     def __init__(self):
@@ -349,7 +349,7 @@ class Image(Geom):
         self.flip = False
         self.v = [[-width//2, -height//2], [width//2, -height//2], [width//2, height//2], [-width//2, -height//2]]
         self.V = []
-    
+
 
     def render1(self, surf: pygame.Surface):
         surf.blit(self.img, (self.V[0], self.V[1]))
@@ -406,7 +406,7 @@ def main():
     while run:
         run = a.render()
         # pygame.draw.polygon(a.screen, [255, 0, 0], [[10, 100], [100, 100], [100, 200]])
-    
+
     pygame.quit()
 
 if __name__ == "__main__":

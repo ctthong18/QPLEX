@@ -50,7 +50,7 @@ class GreedyCameraAgent(CameraAgentBase):  # pylint: disable=too-many-instance-a
         target_states, tracked_bits = self.get_all_opponent_states(observation)
         self.memory = list(target_states)
         self.time2forget = self.memory_period * np.asarray(tracked_bits, dtype=np.int64)
-        self.never_loaded = np.ones(self.num_targets, dtype=np.bool8)
+        self.never_loaded = np.ones(self.num_targets, dtype=np.bool_)
 
         self.prev_action = self.DEFAULT_ACTION
 

@@ -180,7 +180,7 @@ class HeuristicCameraAgent(CameraAgentBase):  # pylint: disable=too-many-instanc
             num_within_range_targets.append(len(within_range_targets))
 
             scores = np.zeros(self.scores.shape[-1], dtype=np.float64)
-            tracked_bits = np.zeros((self.scores.shape[-1], self.num_targets), dtype=np.bool8)
+            tracked_bits = np.zeros((self.scores.shape[-1], self.num_targets), dtype=np.bool_)
             for target_state in within_range_targets:
                 direction = target_state.location - camera_state.location
                 index = np.argmin(np.linalg.norm(direction - self.coord_grid, axis=-1), axis=-1)
@@ -194,7 +194,7 @@ class HeuristicCameraAgent(CameraAgentBase):  # pylint: disable=too-many-instanc
         for _ in range(32):
             permutation = self.np_random.permutation(range(len(camera_states)))
             indices = []
-            current_tracked_bits = np.zeros((self.num_targets,), dtype=np.bool8)
+            current_tracked_bits = np.zeros((self.num_targets,), dtype=np.bool_)
             total_scores = 0
             total_cost = 0
             for c in permutation:
