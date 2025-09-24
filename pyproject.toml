@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "gymnasium>=1.2.0",
+    "jupyter>=1.1.1",
     "matplotlib>=3.10.6",
+    "pandas>=2.3.2",
     "pygame>=2.6.1",
     "pyglet==1.5.27",
     "pyyaml>=6.0.2",
