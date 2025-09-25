@@ -1,7 +1,6 @@
-from typing import Callable, Optional
+from typing import Callable
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 
 from .base_attn import AttentionBase
@@ -86,81 +85,11 @@ class LinearAttention(AttentionBase):
             )  # (B,H,N,Dv)
 
             # Denominator: denom[b,h,n] = Qf[b,h,n] dot Kf_prefix[b,h,n]
-            denominator = torch.einsum("b h n d, b h n d -> b h n", Qf, Kf_prefix).unsqueeze(
-                -1
-            )  # (B,H,N,1)
+            denominator = torch.einsum(
+                "b h n d, b h n d -> b h n", Qf, Kf_prefix
+            ).unsqueeze(-1)  # (B,H,N,1)
 
-        out = numerator / (denominator + self.eps)  # (B,H,N,Dv) / (B,H,N,1) -> (B,H,N,Dv)
-        return out, None    # no attention weights
-
-
-class MHLA(nn.Module):
-    def __init__(
-        self,
-        embed_dim: int,
-        num_heads: int,
-        dropout: float = 0.0,
-        feature_map: Callable[[torch.Tensor], torch.Tensor] = _elu_feature_map,
-        eps: float = 1e-6,
-        bias: bool = False,
-        kdim: Optional[int] = None,
-        vdim: Optional[int] = None,
-        device: Optional[torch.device | str] = None,
-        dtype: Optional[torch.dtype] = None,
-    ) -> None:
-        super().__init__()
-        self.embed_dim = embed_dim
-        self.num_heads = num_heads
-        self.dropout = dropout
-        self.feature_map = feature_map
-        self.eps = eps
-        self.kdim = kdim if kdim is not None else embed_dim
-        self.vdim = vdim if vdim is not None else embed_dim
-
-        factory_kwargs = {"device": device, "dtype": dtype}
-        self.q_proj = nn.Linear(embed_dim, embed_dim, bias=bias, **factory_kwargs)
-        self.k_proj = nn.Linear(self.kdim, embed_dim, bias=bias, **factory_kwargs)
-        self.v_proj = nn.Linear(self.vdim, embed_dim, bias=bias, **factory_kwargs)
-        self.out_proj = nn.Linear(embed_dim, embed_dim, bias=bias, **factory_kwargs)
-
-        self.attn = LinearAttention(feature_map=feature_map, eps=eps)
-        self.dropout_layer = nn.Dropout(dropout)
-
-        self._reset_parameters()
-
-    def _reset_parameters(self):
-        nn.init.xavier_uniform_(self.q_proj.weight)
-        nn.init.xavier_uniform_(self.k_proj.weight)
-        nn.init.xavier_uniform_(self.v_proj.weight)
-        nn.init.xavier_uniform_(self.out_proj.weight)
-        if self.q_proj.bias is not None:
-            nn.init.constant_(self.q_proj.bias, 0.0)
-            nn.init.constant_(self.k_proj.bias, 0.0)
-            nn.init.constant_(self.v_proj.bias, 0.0)
-            nn.init.constant_(self.out_proj.bias, 0.0)
-
-    def forward(self, Q: torch.Tensor, K: torch.Tensor, V: torch.Tensor, causal=False):
-        # Q: (B, N, E)
-        # K: (B, N, Dk)
-        # V: (B, N, Dv)
-        B, N, _ = Q.size()
-        H = self.num_heads
-        D = self.embed_dim // H
-
-        # Project to multi-head
-        Q = self.q_proj(Q)
-        K = self.k_proj(K).view(B, N, H, D).transpose(1, 2)  # (B, H, N, D)
-        V = self.v_proj(V).view(B, N, H, D).transpose(1, 2)  # (B, H, N, D)
-
-        Q = Q.view(B, N, H, D).transpose(1, 2)  # (B, H, N, D)
-
-        # Linear Attention
-        out: torch.Tensor = self.attn(Q, K, V, causal=causal)  # (B, H, N, D)
-        if isinstance(out, tuple):
-            out = out[0]
-        out = out.transpose(1, 2).contiguous().view(B, N, H * D)  # (B, N, E)
-
-        out = self.out_proj(out)
-        out = self.dropout_layer(out)
-        return out
-
+        out = numerator / (
+            denominator + self.eps
+        )  # (B,H,N,Dv) / (B,H,N,1) -> (B,H,N,Dv)
+        return out, None  # no attention weights

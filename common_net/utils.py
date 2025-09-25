@@ -1,20 +1,21 @@
 from collections import OrderedDict
 from typing import Callable
+
 import torch.nn as nn
 from torch import Tensor
 
 from .activations import (
-    GELUActivation,
+    AccurateGELUActivation,
     ClippedGELUActivation,
     FastGELUActivation,
-    NewGELUActivation,
-    PytorchGELUTanh,
-    AccurateGELUActivation,
+    GELUActivation,
     LaplaceActivation,
     LinearActivation,
     MishActivation,
+    NewGELUActivation,
+    PytorchGELUTanh,
     QuickGELUActivation,
-    ReLUSquaredActivation
+    ReLUSquaredActivation,
 )
 
 ACT2CLS = {
@@ -42,11 +43,11 @@ ACT2CLS = {
 }
 
 OP2CLS = {
-    "+": lambda : lambda x, y: x + y,
-    "-": lambda : lambda x, y: x - y,
-    "*": lambda : lambda x, y: x * y,
-    "/": lambda : lambda x, y: x / y,
-    "@": lambda : lambda x, y: x @ y
+    "+": lambda: lambda x, y: x + y,
+    "-": lambda: lambda x, y: x - y,
+    "*": lambda: lambda x, y: x * y,
+    "/": lambda: lambda x, y: x / y,
+    "@": lambda: lambda x, y: x @ y,
 }
 
 
@@ -56,8 +57,10 @@ class ClassInstantier(OrderedDict):
         cls, kwargs = content if isinstance(content, tuple) else (content, {})
         return cls(**kwargs)
 
+
 ACT2FN = ClassInstantier(ACT2CLS)
 OP2FN = ClassInstantier(OP2CLS)
+
 
 def get_activation(activation_string: str | Callable[[Tensor], Tensor]):
     if isinstance(activation_string, Callable):
@@ -66,10 +69,13 @@ def get_activation(activation_string: str | Callable[[Tensor], Tensor]):
         activation_string = activation_string.lower().strip()
         if activation_string in ACT2FN:
             return ACT2FN[activation_string]
-        raise KeyError(f"function {activation_string} not found in ACT2FN mapping {list(ACT2FN.keys())}")
+        raise KeyError(
+            f"function {activation_string} not found in ACT2FN mapping {list(ACT2FN.keys())}"
+        )
     raise ValueError(
         f"activation_string should be either a string or Callable instance, but got {type(activation_string)}"
     )
+
 
 def get_operator_function(operator_string: str | Callable[[Tensor, Tensor], Tensor]):
     if isinstance(operator_string, Callable):
@@ -78,7 +84,9 @@ def get_operator_function(operator_string: str | Callable[[Tensor, Tensor], Tens
         operator_string = operator_string.lower().strip()
         if operator_string in OP2FN:
             return OP2FN[operator_string]
-        raise KeyError(f"function {operator_string} not found in OP2FN mapping {list(OP2FN.keys())}")
+        raise KeyError(
+            f"function {operator_string} not found in OP2FN mapping {list(OP2FN.keys())}"
+        )
     raise ValueError(
         f"operator_string should be either a string or Callable instance, but got {type(operator_string)}"
     )

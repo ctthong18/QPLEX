@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 def repeat_kv(hidden_states: torch.Tensor, n_rep: int) -> torch.Tensor:
     """
     This is the equivalent of torch.repeat_interleave(x, dim=1, repeats=n_rep).
@@ -11,6 +12,7 @@ def repeat_kv(hidden_states: torch.Tensor, n_rep: int) -> torch.Tensor:
         return hidden_states
     hidden_states = hidden_states[:, :, None, :, :].expand(B, Hkv, n_rep, N, D)
     return hidden_states.reshape(B, Hkv * n_rep, N, D)
+
 
 class AttentionBase(nn.Module):
     """
@@ -48,35 +50,50 @@ class AttentionBase(nn.Module):
         if Dq != Dk:
             raise ValueError("Q and K must have same head dimension")
 
-
-    def _forward(self, Q: torch.Tensor, K: torch.Tensor, V: torch.Tensor, *args, **kwargs):
+    def _forward(
+        self, Q: torch.Tensor, K: torch.Tensor, V: torch.Tensor, *args, **kwargs
+    ):
         raise NotImplementedError
 
     def post_forward(self, out):
         return out
 
-    def forward(self, Q: torch.Tensor, K: torch.Tensor, V: torch.Tensor, causal: bool = False, *args, **kwargs):
+    def forward(
+        self,
+        Q: torch.Tensor,
+        K: torch.Tensor,
+        V: torch.Tensor,
+        causal: bool = False,
+        *args,
+        **kwargs,
+    ):
         self.shape_check(Q, K, V)
-
 
         H = Q.shape[1]
         Hk = K.shape[1]
         Hv = V.shape[1]
 
-        K = repeat_kv(K, H//Hk)
-        V = repeat_kv(V, H//Hv)
+        K = repeat_kv(K, H // Hk)
+        V = repeat_kv(V, H // Hv)
 
         if H != K.shape[1] or H != V.shape[1]:
-            raise ValueError("Q, K and H must have same number of heads after expansion, got Hq={}, Hk={}, Hv={}".format(H, K.shape[1], V.shape[1]))
+            raise ValueError(
+                "Q, K and H must have same number of heads after expansion, got Hq={}, Hk={}, Hv={}".format(
+                    H, K.shape[1], V.shape[1]
+                )
+            )
 
         out, weights = self._forward(Q, K, V, causal=causal, *args, **kwargs)
 
         out = self.post_forward(out)
 
         if out.shape != V.shape:
-            raise ValueError(f"Output shape {out.shape} does not match V shape {V.shape}")
+            raise ValueError(
+                f"Output shape {out.shape} does not match V shape {V.shape}"
+            )
 
         return self.post_forward(out), weights
+
 
 class ScaledDotProductAttention(AttentionBase):
     """
@@ -106,6 +123,7 @@ class ScaledDotProductAttention(AttentionBase):
     Raises:
         NotImplementedError: If causal attention is requested (causal=True).
     """
+
     def __init__(self, dropout: float = 0.0):
         super().__init__()
         self.dropout = dropout
@@ -124,22 +142,30 @@ class ScaledDotProductAttention(AttentionBase):
         else:
             scaling = float(D) ** -0.5
 
-            attn_weights = torch.matmul(
-                Q,  # (B, H, N, D)
-                K.transpose(-2, -1),    # (B, H, D, N)
-            )   * scaling  # (B, H, N, N)
+            attn_weights = (
+                torch.matmul(
+                    Q,  # (B, H, N, D)
+                    K.transpose(-2, -1),  # (B, H, D, N)
+                )
+                * scaling
+            )  # (B, H, N, N)
 
             # if attention_mask is not None:
             #     causal_mask = attention_mask[:, :, :, : K.shape[-2]]
             #     attn_weights = attn_weights + causal_mask
 
-            attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32).to(Q.dtype) # (B, H, N, N)
-            attn_weights = nn.functional.dropout(attn_weights, p=self.dropout, training=self.training)
+            attn_weights = nn.functional.softmax(
+                attn_weights, dim=-1, dtype=torch.float32
+            ).to(Q.dtype)  # (B, H, N, N)
+            attn_weights = nn.functional.dropout(
+                attn_weights, p=self.dropout, training=self.training
+            )
 
-            attn_output = torch.matmul(attn_weights, V) # (B, H, N, N) @ (B, H, N, Dv) -> (B, H, N, Dv)
+            attn_output = torch.matmul(
+                attn_weights, V
+            )  # (B, H, N, N) @ (B, H, N, Dv) -> (B, H, N, Dv)
 
             return attn_output, attn_weights
-
 
 
 def main():
@@ -149,6 +175,6 @@ def main():
 
     print(repeat_kv(t, 3).shape)
 
+
 if __name__ == "__main__":
     main()
-
