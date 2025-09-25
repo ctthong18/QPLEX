@@ -40,18 +40,18 @@ class LinearAttention(AttentionBase):
     ):
         # Feature mapping
         # Q: B, H, N, D
-        # K: B, H, N, D
-        # V: B, H, N, Dv
+        # K: B, H, Nkv, D
+        # V: B, H, Nkv, Dv
 
         Qf = self.feature_map(Q)  # (B,H,N,Dphi)
-        Kf = self.feature_map(K)  # (B,H,N,Dphi)
+        Kf = self.feature_map(K)  # (B,H,Nkv,Dphi)
 
         if not causal:
             # Non-causal (fast global aggregation)
             # phi(K).T (B, H, Dphi, N) @ V (B, Hv, N, Dv) -> (B, H, Dphi, Dv)
             KV = torch.matmul(  # phi(K).T @ V
-                Kf.transpose(-2, -1),  # [B, H, D, N]
-                V,  # [B, H, N, E]
+                Kf.transpose(-2, -1),  # [B, H, D, Nkv]
+                V,  # [B, H, Nkv, Dv]
             )  # (B, H, Dphi, Dv)
 
             # phi(K).T * I

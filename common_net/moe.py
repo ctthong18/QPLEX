@@ -289,10 +289,19 @@ class AllGateLoss(nn.Module):
 
 
 class MoEGateLossManager(nn.Module):
-    def __init__(self, criterion: Optional[Callable] = None):
+    def __init__(self, module: nn.Module, criterion: Optional[Callable] = None):
         super().__init__()
-        self.losses: list[MoE] = []
         self.criterion = criterion if criterion is not None else AllGateLoss()
+
+        self.losses: list[MoE] = []
+
+        self._find_moe_layers(module)
+
+    def _find_moe_layers(self, module: nn.Module):
+        """Find all MoE layers in a module recursively."""
+        for name, submodule in module.named_modules():
+            if isinstance(submodule, MoE):
+                self.register_moe(submodule)
 
     def register_moe(self, moe_layer: MoE):
         self.losses.append(moe_layer)

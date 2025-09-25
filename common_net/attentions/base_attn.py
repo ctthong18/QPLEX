@@ -45,8 +45,8 @@ class AttentionBase(nn.Module):
         Bv, Hv, Nv, Dv = V.shape
         if B != Bk or B != Bv:
             raise ValueError("Batch sizes of Q,K,V must match")
-        if N != Nk or N != Nv:
-            raise ValueError("Sequence lengths of Q,K,V must match")
+        if Nk != Nv:
+            raise ValueError("Sequence lengths of K,V must match")
         if Dq != Dk:
             raise ValueError("Q and K must have same head dimension")
 
@@ -132,8 +132,8 @@ class ScaledDotProductAttention(AttentionBase):
         self, Q: torch.Tensor, K: torch.Tensor, V: torch.Tensor, causal: bool = False
     ):
         # Q: (B, H, N, D)
-        # K: (B, H, N, D)
-        # V: (B, H, N, Dv)
+        # K: (B, H, Nkv, D)
+        # V: (B, H, Nkv, Dv)
 
         D = Q.shape[-1]
 
@@ -145,10 +145,10 @@ class ScaledDotProductAttention(AttentionBase):
             attn_weights = (
                 torch.matmul(
                     Q,  # (B, H, N, D)
-                    K.transpose(-2, -1),  # (B, H, D, N)
+                    K.transpose(-2, -1),  # (B, H, D, Nkv)
                 )
                 * scaling
-            )  # (B, H, N, N)
+            )  # (B, H, N, Nkv)
 
             # if attention_mask is not None:
             #     causal_mask = attention_mask[:, :, :, : K.shape[-2]]
@@ -156,14 +156,14 @@ class ScaledDotProductAttention(AttentionBase):
 
             attn_weights = nn.functional.softmax(
                 attn_weights, dim=-1, dtype=torch.float32
-            ).to(Q.dtype)  # (B, H, N, N)
+            ).to(Q.dtype)  # (B, H, N, Nkv)
             attn_weights = nn.functional.dropout(
                 attn_weights, p=self.dropout, training=self.training
             )
 
             attn_output = torch.matmul(
                 attn_weights, V
-            )  # (B, H, N, N) @ (B, H, N, Dv) -> (B, H, N, Dv)
+            )  # (B, H, N, Nkv) @ (B, H, Nkv, Dv) -> (B, H, N, Dv)
 
             return attn_output, attn_weights
 
