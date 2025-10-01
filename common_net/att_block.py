@@ -23,6 +23,14 @@ class MAB(AttnBlock):
     The architecture follows the standard transformer block design with normalization,
     attention, and feed-forward layers with residual connections.
 
+    ```
+    X -> Norm -> MHA -> + ----> Norm -> FF -> + ---> out
+    |                   |   |                 |
+    v                   |   v                 |
+    -------------------->   ------------------>
+    ```
+
+
     Parameters
     ----------
     embed_dim : int
@@ -55,8 +63,8 @@ class MAB(AttnBlock):
     Notes
     -----
     The forward pass applies layer normalization followed by self-attention,
-    a residual connection, then a feed-forward network with another residual
-    connection and final normalization.
+    a residual connection, then a normalization followed by a feed-forward network with another residual
+    connection.
     """
 
     """Multihead Attention Block (MAB)"""
@@ -99,7 +107,6 @@ class MAB(AttnBlock):
         Args:
             X (torch.Tensor): _description_
             causal (bool, optional): _description_. Defaults to False.
-
         """
 
         # ---- Multi-Head Attention ----
@@ -120,6 +127,24 @@ class MAB(AttnBlock):
 
 
 class CrossMAB(AttnBlock):
+    """Cross Multi-head Attention Block module for attention between two different tensors.
+
+    This module implements a cross-attention mechanism where queries come from one tensor (X)
+    and keys/values from another tensor (Y), followed by a feed-forward network.
+    The architecture follows a pre-norm design with residual connections.
+
+        embed_dim (int): The embedding dimension of the input and output tensors.
+        d_ff (int): The dimension of the intermediate feed-forward layer.
+        mha_config (MHAConfig): Configuration object for Multi-Head Attention.
+        norm_cls (type[nn.Module], optional): Normalization layer class.
+            Defaults to ZeroCenteredRMSNorm.
+        norm_kwargs (Optional[dict], optional): Additional arguments for normalization layer.
+            Defaults to None.
+        moe_cls (Optional[type[MoE]], optional): Mixture of Experts class for the feed-forward network.
+            If None, uses GatedMLP instead. Defaults to None.
+        moe_config (Optional[MoEConfig], optional): Configuration for MoE if moe_cls is provided.
+            Defaults to None.
+    """
     def __init__(
         self,
         embed_dim: int,
@@ -174,17 +199,33 @@ class CrossMAB(AttnBlock):
 
 
 class ISAB(AttnBlock):
+    """Inducing Self-Attention Block (ISAB).
+
+    This module implements a self-attention mechanism that uses a set of learnable inducing points
+    to reduce the computational complexity of standard self-attention. Instead of direct all-to-all
+    attention among all elements in the input set, ISAB first computes attention between inducing points
+    and input elements, and then computes attention between input elements and the induced representations.
+    This approach reduces the computational complexity from O(N²) to O(NM), where N is the number of
+    input elements and M is the number of inducing points (typically M << N).
+
+    References:
+        Lee, J., Lee, Y., Kim, J., Kosiorek, A., Choi, S., & Teh, Y. W. (2019).
+        "Set Transformer: A Framework for Attention-based Permutation-Invariant Neural Networks"
+
+    `Note`: This implementation is suboptimal after the introduction of Linear Attention, which provides
+    better efficiency for large sets. Consider using Linear Attention variants for performance-critical applications.
+    """
+
     def __init__(
         self,
         embed_dim: int,
-        num_heads: int,
-        num_inducing: int,
         d_ff: int,
-        dropout: float = 0.1,
-        bias: bool = True,
-        used_moe: bool = False,
-        num_experts: int = 4,
-        moe_top_k: int = 2,
+        num_inducing: int,
+        mha_config: MHAConfig,
+        norm_cls: type[nn.Module] = ZeroCenteredRMSNorm,
+        norm_kwargs: Optional[dict] = None,
+        moe_cls: Optional[type[MoE]] = None,
+        moe_config: Optional[MoEConfig] = None,
     ):
         super().__init__()
 
@@ -193,41 +234,40 @@ class ISAB(AttnBlock):
 
         self.mab1 = CrossMAB(
             embed_dim=embed_dim,
-            num_heads=num_heads,
             d_ff=d_ff,
-            dropout=dropout,
-            bias=bias,
-            used_moe=used_moe,
-            num_experts=num_experts,
-            moe_top_k=moe_top_k,
+            mha_config=mha_config,
+            norm_cls=norm_cls,
+            norm_kwargs=norm_kwargs,
+            moe_cls=moe_cls,
+            moe_config=moe_config
         )
 
         self.mab2 = CrossMAB(
             embed_dim=embed_dim,
-            num_heads=num_heads,
             d_ff=d_ff,
-            dropout=dropout,
-            bias=bias,
-            used_moe=used_moe,
-            num_experts=num_experts,
-            moe_top_k=moe_top_k,
+            mha_config=mha_config,
+            norm_cls=norm_cls,
+            norm_kwargs=norm_kwargs,
+            moe_cls=moe_cls,
+            moe_config=moe_config
         )
 
-    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
+    def forward(self, X: torch.Tensor, causal: bool = False) -> torch.Tensor:
         """
-        x: (B, N, d)  input set
-        mask: optional attention mask
+        x: (B, N, E)  input set
+        causal
         """
 
-        B = x.shape[0]
+        B = X.shape[0]
 
-        H, attn1_weights = self.mab1(
-            self.inducing_points.unsqueeze(0).expand(B, -1, -1), x, mask
-        )  # (B, m, d)
 
-        X, attn2_weights = self.mab2(x, H)  # (B, N, d)
+        inducing = self.inducing_points.unsqueeze(0).expand(B, -1, -1)  # (B, N, E)
 
-        return X
+        H, attn1_weighs = self.mab1(inducing, X, causal=causal)       # (B, M, E)
+
+        out, attn2_weights = self.mab2(X, H)  # (B, N, E)
+
+        return out
 
 
 class ChainBlock(AttnBlock):
