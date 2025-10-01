@@ -9,3 +9,5 @@ _test*
 
 # Virtual environments
 .venv
+
+checkpoints/
