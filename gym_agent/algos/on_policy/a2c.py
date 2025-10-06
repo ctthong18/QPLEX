@@ -1,12 +1,19 @@
-from typing import Any, Callable, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from gymnasium import spaces
 
-from ...agent_base import ActType, ObsType, ActorCriticPolicyAgent
-from ...distributions import (
+from gym_agent.utils import to_torch
+from gym_agent.core.agent_base import (
+    ActorCriticAgentConfig,
+    ActorCriticPolicyAgent,
+    ActType,
+    ObsType,
+)
+from gym_agent.core.distributions import (
     BernoulliDistribution,
     CategoricalDistribution,
     DiagGaussianDistribution,
@@ -14,10 +21,21 @@ from ...distributions import (
     MultiCategoricalDistribution,
     make_proba_distribution,
 )
-from ...polices import ActorCriticPolicy
-from ...transforms import EnvWithTransform
+from gym_agent.core.polices import ActorCriticPolicy
 
-from ....utils import to_torch
+
+@dataclass(kw_only=True)
+class A2CConfig(ActorCriticAgentConfig):
+    max_grad_norm: Optional[float] = 0.5
+    vf_coef: float = 0.5
+    entropy_coef: float = 0.0
+    normalize_advantage: bool = False
+
+    # redefined parameters from base class with different default values
+    n_steps: int = 5
+
+    batch_size: int = None # will be set to n_steps * num_envs in the agent init
+
 
 
 class A2C(ActorCriticPolicyAgent):
@@ -25,30 +43,17 @@ class A2C(ActorCriticPolicyAgent):
 
     def __init__(
         self,
+        env_id: str,
         policy: ActorCriticPolicy,
-        env_factory_fn: Callable[[], EnvWithTransform] | str,
-        env_kwargs: Optional[dict[str, Any]] = None,
-        n_steps: int = 5,
-        num_envs: int = 1,
-        max_grad_norm: Optional[float] = 0.5,
-        gamma=0.99,
-        gae_lambda=1.0,
-        vf_coef=0.5,
-        entropy_coef=0.0,
-        normalize_advantage: bool = False,
-        device="auto",
-        seed=None,
+        config: Optional[A2CConfig] = None,
     ):
+        config = config if config is not None else A2CConfig()
+        config.batch_size = config.n_steps * config.num_envs    # for on-policy, batch_size is n_steps * num_envs
+
         super().__init__(
-            policy,
-            env_factory_fn=env_factory_fn,
-            env_kwargs=env_kwargs,
-            n_steps=n_steps,
-            num_envs=num_envs,
-            gamma=gamma,
-            gae_lambda=gae_lambda,
-            device=device,
-            seed=seed,
+            env_id=env_id,
+            policy=policy,
+            config=config,
             supported_action_spaces=(
                 spaces.Discrete,
                 spaces.MultiDiscrete,
@@ -57,11 +62,11 @@ class A2C(ActorCriticPolicyAgent):
             ),
         )
 
-        self.max_grad_norm = max_grad_norm
+        self.max_grad_norm = config.max_grad_norm
 
-        self.normalize_advantage = normalize_advantage
-        self.vf_coef = vf_coef
-        self.entropy_coef = entropy_coef
+        self.normalize_advantage = config.normalize_advantage
+        self.vf_coef = config.vf_coef
+        self.entropy_coef = config.entropy_coef
         self.action_dist = make_proba_distribution(self.action_space)
 
         # If the action space is continuous, we need to learn the standard deviation
@@ -115,7 +120,7 @@ class A2C(ActorCriticPolicyAgent):
                 # Convert discrete action from float to long
                 actions = actions.long().flatten()  # Shape: (batch_size,)
 
-            log_probs, values, entropy = self.evaluate_actions(
+            values, log_probs, entropy = self.evaluate_actions(
                 rollout_data.observations, actions
             )
 
@@ -127,9 +132,16 @@ class A2C(ActorCriticPolicyAgent):
                 )
 
             # Actor loss
+            # Ensure advantages has the expected shape
+            assert advantages.shape == log_probs.shape, (
+                f"Advantages shape {advantages.shape} doesn't match log_probs shape {log_probs.shape}"
+            )
             policy_loss = -(advantages * log_probs).mean()
 
             # Critic loss
+            assert rollout_data.returns.shape == values.shape, (
+                f"return shape {rollout_data.returns.shape} doesn't match values shape {values.shape}"
+            )
             value_loss = F.mse_loss(rollout_data.returns, values)
 
             if entropy is None:
@@ -143,7 +155,6 @@ class A2C(ActorCriticPolicyAgent):
                 + self.vf_coef * value_loss
                 + self.entropy_coef * entropy_loss
             )
-
 
             self.policy.zero_grad()
             loss.backward()

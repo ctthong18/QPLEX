@@ -105,6 +105,8 @@ class VecEnv(ABC):
         self.num_envs = num_envs
         dummy_env = env_fns[0]()
 
+        self.env_id = dummy_env.spec.id if dummy_env.spec else "unknown"
+
         self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
         check_for_nested_spaces(self.single_observation_space)

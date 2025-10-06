@@ -25,14 +25,24 @@ class BasePolicy(nn.Module):
         }
         return info
 
-    def load_info(self, info: dict):
-        self.load_state_dict(info["model"])
+    def load_model(self, model_state: dict):
+        self.load_state_dict(model_state)
+
+    def load_optimizers(self, optim_state: dict):
         for k, opt in self.optimizers.items():
-            if k in info["optimizers"]:
-                opt.load_state_dict(info["optimizers"][k])
+            if k in optim_state:
+                opt.load_state_dict(optim_state[k])
+
+    def load_lr_schedulers(self, lr_scheduler_state: dict):
         for k, sch in self.lr_schedulers.items():
-            if k in info["lr_schedulers"]:
-                sch.load_state_dict(info["lr_schedulers"][k])
+            if k in lr_scheduler_state:
+                sch.load_state_dict(lr_scheduler_state[k])
+
+    def load_info(self, info: dict):
+        # assume info is from save_info()
+        self.load_model(info["model"])
+        self.load_optimizers(info["optimizers"])
+        self.load_lr_schedulers(info["lr_schedulers"])
 
     def zero_grad(self):
         for optimizer in self.optimizers.values():
@@ -115,9 +125,9 @@ class ActorCriticPolicy(BasePolicy):
         actor_factory_func: Callable[..., nn.Module],
         critic_factory_func: Callable[..., nn.Module],
         actor_lr: float,
+        shared_optimizer: bool = True,
         critic_lr: Optional[float] = None,
         feature_extractor_func: Optional[Callable[..., nn.Module]] = None,
-        shared_feature_extractor: bool = True,
         optim_cls: type[optim.Optimizer] = optim.Adam,
         optim_kwargs: Optional[dict] = None,
         lr_scheduler_cls: Optional[type[optim.lr_scheduler._LRScheduler]] = None,
@@ -151,24 +161,42 @@ class ActorCriticPolicy(BasePolicy):
         self.actor_lr = actor_lr
         self.critic_lr = critic_lr if critic_lr is not None else actor_lr
 
-        self.optimizers = {
-            "actor": optim_cls(
-                self.actor.parameters(), lr=self.actor_lr, **(optim_kwargs or {})
-            ),
-            "critic": optim_cls(
-                self.critic.parameters(), lr=self.critic_lr, **(optim_kwargs or {})
-            ),
-        }
+        self.shared_optimizer = shared_optimizer
 
-        if lr_scheduler_cls is not None:
-            self.lr_schedulers = {
-                "actor": lr_scheduler_cls(
-                    self.optimizers["actor"], **(lr_scheduler_kwargs or {})
+        if shared_optimizer is True:
+            self.optimizers = {
+                "shared": optim_cls(
+                    list(self.actor.parameters()) + list(self.critic.parameters()),
+                    lr=self.actor_lr,
+                    **(optim_kwargs or {})
+                )
+            }
+        else:
+            self.optimizers = {
+                "actor": optim_cls(
+                    self.actor.parameters(), lr=self.actor_lr, **(optim_kwargs or {})
                 ),
-                "critic": lr_scheduler_cls(
-                    self.optimizers["critic"], **(lr_scheduler_kwargs or {})
+                "critic": optim_cls(
+                    self.critic.parameters(), lr=self.critic_lr, **(optim_kwargs or {})
                 ),
             }
+
+        if lr_scheduler_cls is not None:
+            if shared_optimizer is True:
+                self.lr_schedulers = {
+                    "shared": lr_scheduler_cls(
+                        self.optimizers["shared"], **(lr_scheduler_kwargs or {})
+                    )
+                }
+            else:
+                self.lr_schedulers = {
+                    "actor": lr_scheduler_cls(
+                        self.optimizers["actor"], **(lr_scheduler_kwargs or {})
+                    ),
+                    "critic": lr_scheduler_cls(
+                        self.optimizers["critic"], **(lr_scheduler_kwargs or {})
+                    ),
+                }
 
     def extract_features(self, x: torch.Tensor) -> tuple[torch.Tensor, ...]:
         """Extract features from the input tensor.

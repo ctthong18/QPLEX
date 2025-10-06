@@ -439,7 +439,7 @@ class RolloutBuffer(BaseBuffer):
         for step in reversed(range(self.buffer_size)):
             if step == self.buffer_size - 1:
                 next_non_terminal = 1.0 - last_terminals.astype(np.float32)
-                next_values = last_values
+                next_values = np.int64(last_values)
             else:
                 next_non_terminal = 1.0 - self.episode_starts[step + 1]
                 next_values = self.values[step + 1]
@@ -479,19 +479,18 @@ class RolloutBuffer(BaseBuffer):
 
         self.observations = swap_and_flatten(self.observations)
         self.actions = swap_and_flatten(self.actions)
-        self.rewards = swap_and_flatten(self.rewards)
-        self.values = swap_and_flatten(self.values)
-        self.log_probs = swap_and_flatten(self.log_probs)
-        self.advantages = swap_and_flatten(self.advantages)
-        self.returns = swap_and_flatten(self.returns)
+        self.rewards = swap_and_flatten(self.rewards).flatten()
+        self.values = swap_and_flatten(self.values).flatten()
+        self.log_probs = swap_and_flatten(self.log_probs).flatten()
+        self.advantages = swap_and_flatten(self.advantages).flatten()
+        self.returns = swap_and_flatten(self.returns).flatten()
 
         self.processed = True
 
     def get(self, batch_size: int = None) -> Generator[RolloutBufferSamples, Any, None]:
+        mem_size = len(self.observations)
         if not self.processed:
             self.process_mem()
-
-        mem_size = len(self.observations)
 
         if batch_size is None or batch_size is False:
             yield self._get_sample(np.arange(mem_size))

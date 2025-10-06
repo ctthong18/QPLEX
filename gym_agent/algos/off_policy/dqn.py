@@ -1,5 +1,6 @@
 import random
-from typing import Any, Callable, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 import numpy as np
 import torch
@@ -7,11 +8,18 @@ import torch.nn.functional as F
 from gymnasium import spaces
 from torch import Tensor
 
-from ...agent_base import ActType, ObsType, OffPolicyAgent
-from ...polices import TargetPolicy
-from ...transforms import EnvWithTransform
+from gym_agent.utils import to_torch
+from gym_agent.core.agent_base import ActType, ObsType, OffPolicyAgent, OffPolicyAgentConfig
+from gym_agent.core.polices import TargetPolicy
 
-from ....utils import to_torch
+
+@dataclass(kw_only=True)
+class DQNConfig(OffPolicyAgentConfig):
+    eps_start: float = 1.0
+    eps_decay: float = 0.995
+    eps_decay_steps: Optional[int] = None
+    eps_end: float = 0.01
+    tau: float = 1e-3
 
 
 class DQN(OffPolicyAgent):
@@ -19,35 +27,15 @@ class DQN(OffPolicyAgent):
 
     def __init__(
         self,
+        env_id: str,
         policy: TargetPolicy,
-        env_factory_fn: Callable[[], EnvWithTransform] | str,
-        env_kwargs: Optional[dict[str, Any]] = None,
-        num_envs: int = 1,
-        n_steps: int = 1,
-        gamma=0.99,
-        eps_start=1.0,
-        eps_decay=0.99997,
-        eps_decay_steps: Optional[int]=None,
-        eps_end=0.01,
-        tau=1e-3,
-        buffer_size=100000,
-        batch_size=64,
-        async_vectorization: bool = True,
-        device="auto",
-        seed=None,
+        config: Optional[DQNConfig] = None,
     ):
+        config = config if config is not None else DQNConfig()
         super().__init__(
-            policy,
-            env_factory_fn=env_factory_fn,
-            env_kwargs=env_kwargs,
-            num_envs=num_envs,
-            n_steps=n_steps,
-            gamma=gamma,
-            buffer_size=buffer_size,
-            batch_size=batch_size,
-            async_vectorization=async_vectorization,
-            device=device,
-            seed=seed,
+            env_id=env_id,
+            policy=policy,
+            config=config,
             supported_action_spaces=(
                 spaces.Discrete,
                 spaces.MultiDiscrete,
@@ -55,17 +43,19 @@ class DQN(OffPolicyAgent):
             ),
         )
 
-        self.eps_start = eps_start
-        self.eps_decay = eps_decay
-        if eps_decay_steps is not None:
-            self.eps_decay = (eps_end/eps_start) ** (1/eps_decay_steps)
-        self.eps_end = eps_end
+        self.eps_start = config.eps_start
+        self.eps_decay = config.eps_decay
+        if config.eps_decay_steps is not None:
+            self.eps_decay = (config.eps_end / config.eps_start) ** (
+                1 / config.eps_decay_steps
+            )
+        self.eps_end = config.eps_end
 
         # Soft update parameter
-        self.tau = tau
+        self.tau = config.tau
 
         # Initialize epsilon for epsilon-greedy policy
-        self.eps = eps_start
+        self.eps = self.eps_start
 
         self.eps_hist = [self.eps]
 
