@@ -38,6 +38,7 @@ from .buffers import BaseBuffer, ReplayBuffer, RolloutBuffer
 from .callbacks import Callbacks
 from .main import make
 from .polices import ActorCriticPolicy, BasePolicy
+from .logger import configure, Logger
 
 ObsType = TypeVar("ObsType", NDArray, dict[str, NDArray])
 ActType = TypeVar("ActType", NDArray, dict[str, NDArray])
@@ -191,6 +192,7 @@ class ActorCriticAgentConfig(AgentConfig):
 class AgentBase(ABC, Generic[ObsType, ActType]):
     memory: BaseBuffer
     envs: DummyVecEnv | SubprocVecEnv
+    _logger: Logger
 
     def __init__(
         self,
@@ -249,7 +251,9 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
 
             async_vectorization = config.async_vectorization
             if config.num_envs <= 1:
-                async_vectorization = False # no need to use async vectorization for single env
+                async_vectorization = (
+                    False  # no need to use async vectorization for single env
+                )
 
             if async_vectorization:
                 self.envs = SubprocVecEnv(
@@ -303,6 +307,10 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         self.policy = policy
 
         self.device = utils.get_device(config.device)
+
+        #TODO using log
+        print("Using device:", self.device)
+
         self.seed = config.seed
 
         self.batch_size = config.batch_size
@@ -372,6 +380,10 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
                 )
 
         return mean_scores
+
+    @property
+    def logger(self):
+        return self._logger
 
     @property
     def info(self):
@@ -639,19 +651,29 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
     def collect_buffer(self, deterministic: bool, callbacks: Type[Callbacks] = None):
         raise NotImplementedError
 
+    @abstractmethod
+    def learn(self) -> None:
+        raise NotImplementedError
+
     def _setup_fit(
         self,
         total_timesteps: int,
-        callback: Optional[Callbacks] = None,
-        reset_timesteps: bool = False,
-        progress_bar: Optional[Type[tqdm]] = tqdm,
-        tb_log_name: str = "run",
+        callback: Optional[Callbacks],
+        reset_timesteps: bool,
+        progress_bar: Optional[Type[tqdm]],
+        save_dir: str | Path,
+        log_dir: Optional[str],
+        log_formats: Optional[list[str]],
     ) -> tuple[int, tqdm | None, Callbacks]:
-        self.start_time = time.time_ns()
-
+        self._num_timesteps_at_start = 0
         if not reset_timesteps:
             # Make sure training timesteps are ahead of the internal counter
             total_timesteps += self.timesteps
+            self._num_timesteps_at_start = self.timesteps
+
+        train_begin = datetime.now()
+
+        self.start_time = train_begin.timestamp()
 
         # Avoid resetting the environment when calling ``.learn()`` consecutive times
         if reset_timesteps or self._last_obs is None:
@@ -670,7 +692,33 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
             else:
                 warnings.warn("Invalid progress bar type. Disabling progress bar.")
 
-        return total_timesteps, loop, callback
+        log_formats = log_formats if log_formats is not None else []
+
+        log_dir = log_dir if log_dir is not None else save_dir
+
+        save_dir: Path = (
+            Path(save_dir)
+            / self.env_id
+            / self.name
+            / train_begin.strftime("%Y-%m-%d_%H-%M-%S")
+        )
+        save_dir.mkdir(parents=True, exist_ok=True)
+
+        log_dir: Path = (
+            Path(log_dir)
+            / self.env_id
+            / self.name
+            / train_begin.strftime("%Y-%m-%d_%H-%M-%S")
+        )
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+
+        self._logger = configure(
+            log_formats=log_formats,
+        )
+        self.logger.start(str(log_dir))
+
+        return total_timesteps, loop, save_dir, callback
 
     def fit(
         self,
@@ -682,23 +730,40 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         save_every=False,
         improve_threshold_percent: float = 0.0,
         save_dir="./checkpoints",
+        log_dir: Optional[str] = None,
+        log_formats: Optional[list[str]] = None,
+        log_interval: int = 1,
         progress_bar: Optional[Type[tqdm]] = tqdm,
         callbacks: Type[Callbacks] = None,
     ):
-        total_timesteps, loop, callbacks = self._setup_fit(
-            total_timesteps,
-            callbacks,
+        """
+        Train the agent for a certain number of timesteps.
+
+        Args:
+            total_timesteps (int): The total number of timesteps to train the agent.
+            deterministic (bool, optional): Whether to use deterministic actions during training. Defaults to False.
+            reset_timesteps (bool, optional): Whether to reset the timestep counter at the start of training. Defaults to True.
+            save_best (bool, optional): Whether to save the best model based on average score. Defaults to False.
+            save_every (int | bool, optional): If an integer is provided, saves the model every 'save_every' updates. If True, saves every update. Defaults to False.
+            improve_threshold_percent (float, optional): The minimum relative improvement in average score required to consider a new best model. Defaults to 0.0.
+            save_dir (str | Path, optional): The directory where models will be saved. Defaults to "./checkpoints".
+            log_dir (str | None, optional): The directory where logs will be saved. If None, defaults to save_dir
+            log_formats (list[str] | None, optional): List of log formats for logging outputs ```stdout```, ```log```, ```json```, ```csv``` or ```tensorboard```. If None, defaults to [```stdout```].
+            progress_bar (Type[tqdm] | None, optional): The progress bar class to use for displaying training progress. If None, no progress bar is shown. Defaults to tqdm.
+            callbacks (Type[Callbacks] | None, optional): A callback class for custom behavior during training. If None, a default Callbacks instance is used. Defaults to None.
+
+        """
+
+        total_timesteps, loop, save_dir, callbacks = self._setup_fit(
+            total_timesteps=total_timesteps,
+            callback=callbacks,
             reset_timesteps=reset_timesteps,
             progress_bar=progress_bar,
+            save_dir=save_dir,
+            log_dir=log_dir,
+            log_formats=log_formats,
         )
 
-        save_dir: Path = (
-            Path(save_dir)
-            / self.env_id
-            / self.name
-            / datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        )
-        save_dir.mkdir(parents=True, exist_ok=True)
 
         callbacks.on_train_begin()
         self.policy.train()
@@ -708,11 +773,12 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         last_save_best = None
         last_best_score = None
 
+        iteration = 0
+
         while True:
             self.reset()
             timesteps, episodes = self.collect_buffer(deterministic, callbacks)
-
-            self.n_updates += 1
+            iteration += 1
 
             self.timesteps += timesteps
             self.episodes += episodes
@@ -766,7 +832,6 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
 
             if progress_bar:
                 loop.update(timesteps if total_timesteps else episodes)
-
                 loop.set_postfix(
                     {
                         "episodes": self.episodes,
@@ -780,12 +845,37 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
             if self.timesteps >= total_timesteps:
                 break
 
+            if len(self.memory) > self.batch_size:
+                callbacks.on_learn_begin()
+                self.learn()
+                callbacks.on_learn_end()
+                self.n_updates += 1
+
+            time_elapsed = (datetime.now().timestamp() - self.start_time)   # seconds
+            fps = int((self.timesteps - self._num_timesteps_at_start) / time_elapsed)
+            self.logger.record("time/iterations", iteration, exclude="tensorboard")
+            self.logger.record("time/total_timesteps", self.timesteps, exclude="tensorboard")
+            self.logger.record("time/episodes", self.episodes, exclude="tensorboard")
+            self.logger.record("time/n_updates", self.n_updates, exclude="tensorboard")
+            self.logger.record("time/time_elapsed", time_elapsed, exclude="tensorboard")
+            self.logger.record("time/fps", fps)
+
+            self.logger.record("rollout/avg_score", avg_score)
+            self.logger.record(
+                "rollout/score",
+                self.scores[-1] if len(self.scores) > 0 else None,
+            )
+
+            if log_interval > 0 and iteration % log_interval == 0:
+                self.logger.dump(iteration)
+
         self.save(
             save_dir, f"last_{np.mean(self.scores[-self._mean_score_window :]):.2f}"
         )
 
         callbacks.on_train_end()
-        self.end_time = time.time_ns()
+        self.end_time = datetime.now().timestamp()
+        self.logger.close()
 
     def play(
         self,
@@ -984,11 +1074,6 @@ class OffPolicyAgent(AgentBase[ObsType, ActType]):
             # count how many episodes finished
             episodes += np.sum(self._last_episode_starts)
 
-        if len(self.memory) >= self.batch_size:
-            callbacks.on_learn_begin()
-            self.learn()
-            callbacks.on_learn_end()
-
         # TODO: this is not an episode, so the callbacks should be different
         callbacks.on_episode_end()
 
@@ -1149,9 +1234,6 @@ class ActorCriticPolicyAgent(AgentBase[ObsType, ActType]):
         self.memory.calc_advantages_and_returns(
             last_values=values, last_terminals=self._last_episode_starts
         )
-        callbacks.on_learn_begin()
-        self.learn()
-        callbacks.on_learn_end()
 
         # TODO: this is not an episode, so the callbacks should be different
         callbacks.on_episode_end()
