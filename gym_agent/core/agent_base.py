@@ -1,13 +1,15 @@
 # Standard library imports
-import datetime
 import importlib
+import pickle
+import tempfile
 import time
+import warnings
+import zipfile
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Generic, Optional, Type, TypeVar
-import pickle
-
 
 # Third-party imports
 import gymnasium as gym
@@ -29,7 +31,6 @@ from gym_agent.core.distributions import (
     MultiCategoricalDistribution,
     make_proba_distribution,
 )
-import warnings
 from gym_agent.core.vec_env.dummy_vec_env import DummyVecEnv
 from gym_agent.core.vec_env.subproc_vec_env import SubprocVecEnv
 
@@ -40,6 +41,70 @@ from .polices import ActorCriticPolicy, BasePolicy
 
 ObsType = TypeVar("ObsType", NDArray, dict[str, NDArray])
 ActType = TypeVar("ActType", NDArray, dict[str, NDArray])
+
+
+def auto_find_path(path, env_id: str, name: str, model_version="last"):
+    """
+    Automatically find the correct path given partial path information.
+    .../env_id/name/start_training_time/model_version*
+
+    Args:
+        path (str or Path): Base path (could be incomplete).
+        env_id (str): Environment identifier.
+        name (str): Name of the model or entity.
+        model_version (str): Model version, default "last".
+
+    Returns:
+        Path: The fully resolved path.
+
+    Raises:
+        PathNotFoundError: If no matching path is found.
+    """
+
+    base_path = Path(path).resolve()
+
+    env_id = env_id.strip()
+    name = name.strip()
+    model_version = model_version.strip()
+
+    if base_path.is_file():
+        if base_path.suffix in [".zip", ".tar", ".gz"]:
+            return base_path
+
+    # Adjust path based on ending
+    if (
+        base_path.parts[-2] == name and base_path.parts[-3] == env_id
+    ):  # .../env_id/name/start_time
+        pass
+    elif base_path.name == name:  # .../env_id/name
+        pass
+    elif base_path.name == env_id:  # .../env_id
+        base_path = base_path / name
+    else:
+        # Search recursively for env_id/name directory structure
+        found_paths = list(base_path.rglob(f"{env_id}/{name}"))
+        if not found_paths:
+            raise FileNotFoundError(
+                f"Could not find '{env_id}/{name}' under {base_path}"
+            )
+        base_path = found_paths[0]  # Pick the first match (you could sort if needed)
+
+    if not base_path.exists():
+        raise FileNotFoundError(f"Base path does not exist: {base_path}")
+
+    matches = [
+        f
+        for f in base_path.glob(f"**/{model_version}*")
+        if f.is_file() and f.suffix in [".zip", ".tar", ".gz"]
+    ]
+
+    if matches:
+        matches.sort(key=lambda p: p.name, reverse=True)
+        return matches[0]
+
+    raise FileNotFoundError(
+        f"No matching file found for model_version '{model_version}' in {base_path} with env_id '{env_id}' and name '{name}'."
+    )
 
 
 class Clock:
@@ -182,7 +247,11 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         if isinstance(self.env_id, str):
             env_factory_fn = lambda **kwargs: make(self.env_id, **kwargs)  # noqa: E731
 
-            if config.async_vectorization:
+            async_vectorization = config.async_vectorization
+            if config.num_envs <= 1:
+                async_vectorization = False # no need to use async vectorization for single env
+
+            if async_vectorization:
                 self.envs = SubprocVecEnv(
                     [
                         lambda: env_factory_fn(**env_kwargs)
@@ -344,7 +413,7 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
 
         self.save_kwargs.append(name)
 
-    def save(self, save_dir: Path | str, *post_names):
+    def save(self, save_dir: Path | str, filename: str = "checkpoint"):
         """Save the agent's information to a file.
 
         Args:
@@ -353,12 +422,6 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
             save_key (list[str], optional): The keys to save. If not provided, defaults to ["policy", "total_timesteps", "scores", "mean_scores", "optimizers"] + self.save_kwargs
         """
         save_dir = Path(save_dir)
-
-
-        for post_name in post_names:
-            save_dir = save_dir / str(post_name)
-
-        save_dir.mkdir(parents=True, exist_ok=True)
 
         # Get the information to be saved
         policy_info = self.policy.save_info()
@@ -385,24 +448,37 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         for name in self.save_kwargs:
             save_info["additional_info"][name] = getattr(self, name)
 
-        # saving model property
-        torch.save(save_info["model"], save_dir / "model.pth")
-        torch.save(save_info["optimizers"], save_dir / "optimizers.pth")
-        torch.save(save_info["lr_schedulers"], save_dir / "lr_schedulers.pth")
+        # Create a temporary directory to store files before zipping
 
-        # saving configuration as yaml:
-        with open(save_dir / "config.yaml", "w") as f:
-            yaml.dump(save_info["config"], f, sort_keys=False)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
 
-        # saving training information as yaml:
-        with open(save_dir / "training_info.yaml", "w") as f:
-            yaml.dump(save_info["training_info"], f, sort_keys=False)
+            # Save files to temporary directory
+            torch.save(save_info["model"], temp_path / "model.pth")
+            torch.save(save_info["optimizers"], temp_path / "optimizers.pth")
+            torch.save(save_info["lr_schedulers"], temp_path / "lr_schedulers.pth")
 
-        # saving additional information as pickle for non-serializable data
-        with open(save_dir / "additional_info.pkl", "wb") as f:
-            pickle.dump(save_info["additional_info"], f)
+            # Save configuration as yaml
+            with open(temp_path / "config.yaml", "w") as f:
+                yaml.dump(save_info["config"], f, sort_keys=False)
 
-    def load_model(self, load_dir: Path | str, *post_names):
+            # Save training information as yaml
+            with open(temp_path / "training_info.yaml", "w") as f:
+                yaml.dump(save_info["training_info"], f, sort_keys=False)
+
+            # Save additional information as pickle for non-serializable data
+            with open(temp_path / "additional_info.pkl", "wb") as f:
+                pickle.dump(save_info["additional_info"], f)
+
+            # Create the zip file
+            save_dir.mkdir(parents=True, exist_ok=True)
+            zip_path = (save_dir / filename).with_suffix(".zip")
+
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+                for file in temp_path.glob("*"):
+                    zipf.write(file, arcname=file.name)
+
+    def load_model(self, load_dir: Path | str) -> None:
         """Load the agent's information from a file.
 
         Args:
@@ -414,9 +490,6 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         # paths is: .../env_id/agent_name/time/name.pth
 
         load_dir = Path(load_dir)
-
-        for post_name in post_names:
-            load_dir = load_dir / str(post_name)
 
         # loading model property
         self.policy.load_model(
@@ -430,7 +503,7 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         )
 
     @staticmethod
-    def load_config(load_dir: Path | str, *post_names) -> AgentConfig:
+    def load_config(load_dir: Path | str) -> AgentConfig:
         """Load the agent's configuration from a file.
 
         Args:
@@ -439,9 +512,6 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         """
 
         load_dir = Path(load_dir)
-
-        for post_name in post_names:
-            load_dir = load_dir / str(post_name)
 
         # loading configuration from yaml:
         with open(load_dir / "config.yaml", "r") as f:
@@ -469,9 +539,10 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
     @classmethod
     def from_checkpoint(
         cls,
+        env_id: str,
         policy: BasePolicy,
-        load_dir: Path | str,
-        *post_names,
+        path: Path | str,
+        model_version: str = "last",
     ):
         """Create an agent from a checkpoint.
 
@@ -483,38 +554,59 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
             cls: The created agent.
         """
 
-        load_dir = Path(load_dir)
+        path = Path(path)
 
-        for post_name in post_names:
-            load_dir = load_dir / str(post_name)
+        load_file = auto_find_path(
+            path, env_id=env_id, name=cls.__name__, model_version=model_version
+        )
 
-        # loading configuration from yaml:
-        env_id, config = cls.load_config(load_dir)
-        # Create the agent instance
-        agent = cls(env_id=env_id, policy=policy, config=config)
-        # Load the model parameters
-        agent.load_model(load_dir)
+        # TODO: add logging
+        print(f"Loading checkpoint from {load_file}")
 
-        # loading training information from yaml:
-        with open(load_dir / "training_info.yaml", "r") as f:
-            training_info = yaml.safe_load(f)
-            agent.start_time = training_info.get("start_time", None)
-            agent.end_time = training_info.get("end_time", None)
-            agent.scores = training_info.get("scores", [])
-            agent.episodes = training_info.get("episodes", 0)
-            agent.timesteps = training_info.get("total_timesteps", 0)
+        # Extract the zip file to a temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
 
-        # loading additional information from pickle
-        with open(load_dir / "additional_info.pkl", "rb") as f:
-            additional_info: dict = pickle.load(f)
-            for name in additional_info:
-                if name not in agent.save_kwargs:
-                    agent.add_save_kwargs(name)
-                    warnings.warn(
-                        f"Warning: {name} is not in save_kwargs, but found in additional_info.pkl."
-                    )
+            # Open and extract the zip file
+            with zipfile.ZipFile(load_file, "r") as zip_ref:
+                zip_ref.extractall(temp_path)
 
-                setattr(agent, name, additional_info[name])
+            # Use the temporary directory as the load directory
+            load_dir = temp_path
+
+            # loading configuration from yaml:
+            config_env_id, config = cls.load_config(load_dir)
+            if config_env_id != env_id:
+                warnings.warn(
+                    f"Warning: env_id in config ({config_env_id}) does not match the provided env_id ({env_id}). Using the config env_id."
+                )
+                env_id = config_env_id
+
+            # Create the agent instance
+            agent = cls(env_id=env_id, policy=policy, config=config)
+            # Load the model parameters
+            agent.load_model(load_dir)
+
+            # loading training information from yaml:
+            with open(load_dir / "training_info.yaml", "r") as f:
+                training_info = yaml.safe_load(f)
+                agent.start_time = training_info.get("start_time", None)
+                agent.end_time = training_info.get("end_time", None)
+                agent.scores = training_info.get("scores", [])
+                agent.episodes = training_info.get("episodes", 0)
+                agent.timesteps = training_info.get("total_timesteps", 0)
+
+            # loading additional information from pickle
+            with open(load_dir / "additional_info.pkl", "rb") as f:
+                additional_info: dict = pickle.load(f)
+                for name in additional_info:
+                    if name not in agent.save_kwargs:
+                        agent.add_save_kwargs(name)
+                        warnings.warn(
+                            f"Warning: {name} is not in save_kwargs, but found in additional_info.pkl."
+                        )
+
+                    setattr(agent, name, additional_info[name])
 
         return agent
 
@@ -571,7 +663,6 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         if callback is None:
             callback = Callbacks(self)
 
-
         loop = None
         if progress_bar is not None:
             if issubclass(progress_bar, tqdm):
@@ -589,11 +680,11 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
         reset_timesteps: bool = True,
         save_best=False,
         save_every=False,
+        improve_threshold_percent: float = 0.0,
         save_dir="./checkpoints",
         progress_bar: Optional[Type[tqdm]] = tqdm,
         callbacks: Type[Callbacks] = None,
     ):
-
         total_timesteps, loop, callbacks = self._setup_fit(
             total_timesteps,
             callbacks,
@@ -601,10 +692,12 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
             progress_bar=progress_bar,
         )
 
-
-        time_func = lambda: datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # noqa: E731
-
-        save_dir = Path(save_dir) / self.env_id / self.name
+        save_dir: Path = (
+            Path(save_dir)
+            / self.env_id
+            / self.name
+            / datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        )
         save_dir.mkdir(parents=True, exist_ok=True)
 
         callbacks.on_train_begin()
@@ -612,13 +705,14 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
 
         best_score = float("-inf")
 
+        last_save_best = None
+        last_best_score = None
+
         while True:
             self.reset()
             timesteps, episodes = self.collect_buffer(deterministic, callbacks)
 
             self.n_updates += 1
-
-            learning_done = time_func()
 
             self.timesteps += timesteps
             self.episodes += episodes
@@ -626,23 +720,49 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
             if len(self.scores) == 0:
                 avg_score = None
             else:
-                avg_score = np.mean(self.scores[-self._mean_score_window :])
+                avg_score = float(np.mean(self.scores[-self._mean_score_window :]))
 
             if save_best and avg_score is not None:
-                if avg_score > best_score or (avg_score == best_score and episodes > 0):
-                    # only save when improved and at least one env finished an episode
-                    # or the best score is updated
+                relative_improvement = (
+                    improve_threshold_percent + 1e-10
+                )  # to ensure the first time it always saves
+                if last_best_score is not None:
+                    relative_improvement = (avg_score - last_best_score) / (
+                        abs(last_best_score) + abs(avg_score) + 1e-10
+                    )
+
+                if (
+                    avg_score >= best_score
+                    and episodes > 0
+                    and relative_improvement >= improve_threshold_percent
+                ):
+                    # only save if there is an improvement and at least one episode is done
                     # to avoid saving too many times when the score is not improved but one env finished an episode
                     # e.g. when the agent is not learning at all
                     # and the score is always 0, but one env finishes an episode every now and then
                     # we don't want to save the model every time that happens
                     # so we only save when the best score is updated
+
                     best_score = avg_score
-                    self.save(save_dir, "best")
+                    if last_save_best is not None:
+                        # remove the previous best model to save space
+                        best_path = save_dir / last_save_best
+
+                        suffix = [".zip", ".tar", ".gz"]
+                        for s in suffix:
+                            best_path_s = best_path.with_suffix(s)
+                            if best_path_s.exists():
+                                best_path_s.unlink(missing_ok=True)
+
+                    save_file = f"best_{best_score:.2f}"
+
+                    self.save(save_dir, save_file)
+                    last_save_best = save_file
+                    last_best_score = best_score
 
             if save_every:
                 if self.n_updates % save_every == 0:
-                    self.save(save_dir, learning_done + f"_{self.n_updates}")
+                    self.save(save_dir, f"{self.n_updates}_{avg_score}")
 
             if progress_bar:
                 loop.update(timesteps if total_timesteps else episodes)
@@ -660,8 +780,9 @@ class AgentBase(ABC, Generic[ObsType, ActType]):
             if self.timesteps >= total_timesteps:
                 break
 
-
-        self.save(save_dir, "last")
+        self.save(
+            save_dir, f"last_{np.mean(self.scores[-self._mean_score_window :]):.2f}"
+        )
 
         callbacks.on_train_end()
         self.end_time = time.time_ns()
@@ -830,7 +951,9 @@ class OffPolicyAgent(AgentBase[ObsType, ActType]):
         """
         ...
 
-    def collect_buffer(self, deterministic: bool, callbacks: Type[Callbacks]) -> tuple[int, int]:
+    def collect_buffer(
+        self, deterministic: bool, callbacks: Type[Callbacks]
+    ) -> tuple[int, int]:
         # TODO: this is not an episode, so the callbacks should be different
         callbacks.on_episode_begin()
 
