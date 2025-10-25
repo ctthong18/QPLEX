@@ -1,0 +1,8 @@
+{
+  "mean_episode_reward": 162.6,
+  "std_episode_reward": 207.7379118023477,
+  "mean_episode_length": 7999.4,
+  "timestep": 49001,
+  "episode_count": 5,
+  "buffer_size": 49001
+}

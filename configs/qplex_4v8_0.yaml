@@ -1,0 +1,98 @@
+# QPLEX Configuration for MATE 4v8 environment
+name: "QPLEX_4v8_0"
+env_name: "MATE-4v8-0"
+seed: 42
+
+# Environment settings
+env:
+  config_file: "mate/assets/MATE-4v8-9.yaml"
+  max_episode_steps: 10000
+  reward_type: "dense"
+  render_mode: "human"  # "human" or "rgb_array"
+  window_size: 800
+
+# Training settings
+training:
+  total_timesteps: 15000000  # More timesteps for larger environment
+  learning_starts: 100000
+  train_freq: 4
+  target_update_interval: 200
+  gradient_steps: 1
+  batch_size: 64  # Larger batch size for more agents
+  buffer_size: 200000  # Larger buffer for more complex environment
+  n_episodes: 2000
+  
+# Algorithm settings
+algorithm:
+  name: "QPLEX"
+  learning_rate: 0.0003  # Slightly lower learning rate for stability
+  gamma: 0.99
+  tau: 0.005
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  epsilon_decay: 0.99995  # Slower decay for more exploration
+  dueling: true
+  double_q: true
+  
+# Network architecture
+network:
+  # Individual Q-networks
+  q_network:
+    hidden_dims: [512, 512]  # Larger networks for more complex environment
+    use_rnn: true  # Use RNN for better memory
+    rnn_hidden_dim: 256
+    rnn_layers: 2
+    rnn_type: "lstm"  # "lstm" or "gru"
+    use_attention: true  # Use attention for better coordination
+    num_attention_heads: 8
+    dropout: 0.1
+    activation: "relu"  # "relu", "tanh", "leaky_relu"
+  
+  # Mixing network
+  mixing_network:
+    hidden_dims: [512, 512]  # Larger mixing network
+    use_hypernet: true
+    dropout: 0.1
+    activation: "relu"
+  
+  # Target network update
+  target_update:
+    method: "soft"  # "soft" or "hard"
+    tau: 0.005
+
+# Agent settings
+agents:
+  n_agents: 8  # 8 target agents
+  obs_dim: null  # Will be set automatically from environment
+  action_dim: null  # Will be set automatically from environment
+  state_dim: null  # Will be set automatically from environment
+  
+# Logging and evaluation
+logging:
+  log_interval: 2000
+  eval_interval: 20000
+  save_interval: 200000
+  log_dir: "./logs"
+  model_dir: "./models"
+  tensorboard: true
+  wandb: false
+  wandb_project: "qplex-mate"
+  wandb_entity: null
+
+# Evaluation settings
+evaluation:
+  n_eval_episodes: 20  # More evaluation episodes
+  eval_deterministic: true
+  render_eval: false
+  save_videos: false
+  video_dir: "./videos"
+
+# Device settings
+device:
+  use_cuda: true
+  cuda_device: 0
+
+# Reproducibility
+reproducibility:
+  deterministic: true
+  benchmark: false
