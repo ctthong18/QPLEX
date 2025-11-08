@@ -1,0 +1,12 @@
+{
+  "mean_episode_reward": 481.5,
+  "std_episode_reward": 158.7129659339638,
+  "mean_episode_length": 1999.111111111111,
+  "mean_loss": 907319530487.808,
+  "mean_q_values": -15.806082622289658,
+  "mean_td_error": 19.242226244926453,
+  "mean_epsilon": 0.4608087933981895,
+  "timestep": 38001,
+  "episode_count": 18,
+  "buffer_size": 10000
+}

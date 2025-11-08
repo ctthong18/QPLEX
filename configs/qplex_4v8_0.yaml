@@ -6,20 +6,20 @@ seed: 42
 # Environment settings
 env:
   config_file: "mate/assets/MATE-4v8-9.yaml"
-  max_episode_steps: 10000
+  max_episode_steps: 2000
   reward_type: "dense"
   render_mode: "human"  # "human" or "rgb_array"
   window_size: 800
 
 # Training settings
 training:
-  total_timesteps: 15000000  # More timesteps for larger environment
-  learning_starts: 100000
+  total_timesteps: 40000  # More timesteps for larger environment
+  learning_starts: 5000
   train_freq: 4
   target_update_interval: 200
   gradient_steps: 1
   batch_size: 64  # Larger batch size for more agents
-  buffer_size: 200000  # Larger buffer for more complex environment
+  buffer_size: 20000  # Larger buffer for more complex environment
   n_episodes: 2000
   
 # Algorithm settings
@@ -70,9 +70,9 @@ agents:
 # Logging and evaluation
 logging:
   log_interval: 2000
-  eval_interval: 20000
-  save_interval: 200000
-  log_dir: "./logs"
+  eval_interval: 2000
+  save_interval: 2000
+  log_dir: "./logs/qplex"
   model_dir: "./models"
   tensorboard: true
   wandb: false

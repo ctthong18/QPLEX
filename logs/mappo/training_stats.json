@@ -1,0 +1,8 @@
+{
+  "mean_episode_reward": 2040.0,
+  "mean_loss": 0.0,
+  "mean_q_values": 0.0,
+  "mean_epsilon": 0.0,
+  "buffer_size": 1,
+  "episode_count": 18
+}

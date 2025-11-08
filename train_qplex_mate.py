@@ -329,29 +329,29 @@ def train_qplex(config: Dict[str, Any], logger: logging.Logger):
         
         # Save model
         if timestep % save_interval == 0 and timestep > 0:
-            model_file = os.path.join(model_dir, f'model_{timestep}.pth')
+            model_file = os.path.join(model_dir, f'qplex_model_{timestep}.pth')
             learner.save(model_file)
             logger.info(f"Model saved to {model_file}")
     
     # Final evaluation
     logger.info("Final evaluation...")
-    final_eval_results = evaluate_agent(learner, env, n_eval_episodes * 2, render=False)
+    qplex_final_eval_results = evaluate_agent(learner, env, n_eval_episodes * 2, render=False)
     
     logger.info("Final evaluation results:")
-    logger.info(f"  Mean episode reward: {final_eval_results['mean_episode_reward']:.2f} ± {final_eval_results['std_episode_reward']:.2f}")
-    logger.info(f"  Mean episode length: {final_eval_results['mean_episode_length']:.2f}")
-    logger.info(f"  Mean coverage rate: {final_eval_results['mean_coverage_rate']:.4f}")
-    logger.info(f"  Mean transport rate: {final_eval_results['mean_transport_rate']:.4f}")
+    logger.info(f"  Mean episode reward: {qplex_final_eval_results['mean_episode_reward']:.2f} ± {qplex_final_eval_results['std_episode_reward']:.2f}")
+    logger.info(f"  Mean episode length: {qplex_final_eval_results['mean_episode_length']:.2f}")
+    logger.info(f"  Mean coverage rate: {qplex_final_eval_results['mean_coverage_rate']:.4f}")
+    logger.info(f"  Mean transport rate: {qplex_final_eval_results['mean_transport_rate']:.4f}")
     
     # Save final model
-    final_model_file = os.path.join(model_dir, 'final_model.pth')
-    learner.save(final_model_file)
-    logger.info(f"Final model saved to {final_model_file}")
+    qplex_final_model_file = os.path.join(model_dir, 'qplex_final_model.pth')
+    learner.save(qplex_final_model_file)
+    logger.info(f"Final model saved to {qplex_final_model_file}")
     
     # Save final evaluation results
-    final_eval_file = os.path.join(log_dir, 'final_eval_results.json')
-    with open(final_eval_file, 'w') as f:
-        json.dump(final_eval_results, f, indent=2)
+    qplex_final_eval_file = os.path.join(log_dir, 'qplex_final_eval_results.json')
+    with open(qplex_final_eval_file, 'w') as f:
+        json.dump(qplex_final_eval_results, f, indent=2)
     
     logger.info("Training completed!")
     

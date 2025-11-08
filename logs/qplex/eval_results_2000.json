@@ -1,0 +1,7 @@
+{
+  "mean_episode_reward": 473.7,
+  "std_episode_reward": 157.53732890969047,
+  "mean_episode_length": 10001.0,
+  "mean_coverage_rate": 0.3,
+  "mean_transport_rate": 0.0
+}

@@ -209,11 +209,16 @@ class QPLEXAgent:
         
         # Compute target Q-values
         target_q_total = target_q_total.squeeze(-1)  # (batch_size,)
-        target_q_total = rewards.sum(dim=1) + self.gamma * target_q_total * (1 - dones)
+        target_q_total = rewards.sum(dim=1) + self.gamma * target_q_total * (1 - dones.float())
         
         # Compute individual target Q-values
-        target_q_individual = rewards + self.gamma * target_q_values * (1 - dones.unsqueeze(1))
-        
+        target_q_individual = rewards + self.gamma * target_q_values * (1 - dones.unsqueeze(1).float())
+        # print("current_q_values.shape =", current_q_values.shape)
+        # print("actions.shape =", actions.shape)
+        # print("actions.unsqueeze(-1).shape =", actions.unsqueeze(-1).shape)
+        if actions.dim() == 3 and actions.size(-1) > 1:
+            actions = actions.argmax(dim=-1)
+
         # Current Q-values for selected actions
         current_q_selected = current_q_values.gather(2, actions.unsqueeze(-1)).squeeze(-1)
         current_q_total_selected = current_q_total.squeeze(-1)

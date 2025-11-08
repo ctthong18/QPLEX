@@ -1,0 +1,112 @@
+# MAPPO Configuration for MATE 4v8 environment
+name: "MAPPO_4v8_0"
+env_name: "MATE-4v8-0"
+seed: 42
+
+# Environment settings
+env:
+  config_file: "mate/assets/MATE-4v8-0.yaml"
+  max_episode_steps: 10000
+  reward_type: "dense"
+  render_mode: null  # "human" or "rgb_array" or null for no rendering
+  window_size: 800
+
+# Training settings
+training:
+  total_timesteps: 10000000
+  learning_starts: 0  # MAPPO is on-policy, no learning starts needed
+  n_episodes: 1000
+
+# Algorithm settings (MAPPO specific)
+algorithm:
+  name: "MAPPO"
+  
+  # Learning rates
+  lr: 3e-4  # Actor learning rate
+  critic_lr: 3e-4  # Critic learning rate
+  opti_eps: 1e-5  # Optimizer epsilon
+  weight_decay: 0.0  # Weight decay
+  
+  # PPO hyperparameters
+  clip_param: 0.2  # PPO clip parameter
+  ppo_epoch: 10  # Number of PPO epochs per update
+  num_mini_batch: 1  # Number of mini-batches per epoch
+  data_chunk_length: 10  # For recurrent policies
+  
+  # Loss coefficients
+  value_loss_coef: 0.5  # Value loss coefficient
+  entropy_coef: 0.01  # Entropy coefficient for exploration
+  max_grad_norm: 10.0  # Gradient clipping norm
+  use_max_grad_norm: true
+  
+  # Value function settings
+  use_clipped_value_loss: true  # Use clipped value loss
+  use_huber_loss: false  # Use Huber loss instead of MSE
+  huber_delta: 10.0  # Huber loss delta
+  use_popart: false  # Use PopArt normalization
+  use_valuenorm: false  # Use ValueNorm normalization
+  use_value_active_masks: false  # Use active masks for value loss
+  
+  # Policy settings
+  use_policy_active_masks: false  # Use active masks for policy loss
+  
+  # Discount and GAE
+  gamma: 0.99  # Discount factor
+  gae_lambda: 0.95  # GAE lambda parameter
+  
+  # Network architecture
+  hidden_size: 64  # Hidden layer size
+  layer_N: 1  # Number of hidden layers
+  use_orthogonal: true  # Use orthogonal initialization
+  use_ReLU: true  # Use ReLU activation (false for Tanh)
+  gain: 0.01  # Output layer gain
+  
+  # RNN settings (set to false for feed-forward)
+  use_recurrent_policy: false  # Use recurrent policy (GRU)
+  use_naive_recurrent_policy: false  # Use naive recurrent policy
+  recurrent_N: 1  # Number of recurrent layers
+  use_feature_normalization: false  # Normalize input features
+  stacked_frames: 1  # Number of stacked frames
+  
+  # Buffer settings
+  episode_length: 200  # Episode length for buffer
+  n_rollout_threads: 1  # Number of parallel environments
+
+# Agent settings
+agents:
+  n_agents: 4
+  obs_dim: null  # Will be set automatically from environment
+  action_dim: null  # Will be set automatically from environment
+  state_dim: null  # Will be set automatically from environment
+
+# Logging and evaluation
+logging:
+  level: "INFO"
+  log_interval: 1000
+  eval_interval: 10000
+  save_interval: 100000
+  log_dir: "./logs/mappo"
+  model_dir: "./models/mappo"
+  tensorboard: false
+  wandb: false
+  wandb_project: "mappo-mate"
+  wandb_entity: null
+
+# Evaluation settings
+evaluation:
+  n_eval_episodes: 10
+  eval_deterministic: true
+  render_eval: false
+  save_videos: false
+  video_dir: "./videos/mappo"
+
+# Device settings
+device:
+  use_cuda: true
+  cuda_device: 0
+
+# Reproducibility
+reproducibility:
+  deterministic: true
+  benchmark: false
+

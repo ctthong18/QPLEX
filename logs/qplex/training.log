@@ -1,0 +1,290 @@
+2025-11-06 10:42:10,914 - QPLEX - INFO - Starting QPLEX training on MATE environment
+2025-11-06 10:42:10,914 - QPLEX - INFO - Configuration: configs/qplex_4v4_9.yaml
+2025-11-06 10:42:10,914 - QPLEX - INFO - Seed: 42
+2025-11-06 10:42:12,653 - QPLEX - INFO - Using device: cuda
+2025-11-06 10:42:12,700 - QPLEX - INFO - Environment created: <MultiAgentTracking instance>(4 cameras, 4 targets, 9 obstacles)
+2025-11-06 10:42:12,700 - QPLEX - INFO - Environment dimensions:
+2025-11-06 10:42:12,700 - QPLEX - INFO -   Observation dim: 106
+2025-11-06 10:42:12,700 - QPLEX - INFO -   Action dim: 2
+2025-11-06 10:42:12,700 - QPLEX - INFO -   State dim: 156
+2025-11-06 10:42:12,700 - QPLEX - INFO -   Number of agents: 4
+2025-11-06 10:42:15,002 - QPLEX - INFO - QPLEX learner created and setup
+2025-11-06 10:42:15,012 - QPLEX - INFO - Starting training...
+2025-11-06 10:42:25,850 - QPLEX - INFO - Timestep 2000/40000
+2025-11-06 10:42:25,850 - QPLEX - INFO -   Elapsed time: 10.84s
+2025-11-06 10:42:25,850 - QPLEX - INFO -   Episode count: 0
+2025-11-06 10:42:25,850 - QPLEX - INFO -   Mean episode reward: 0.00
+2025-11-06 10:42:25,850 - QPLEX - INFO -   Mean loss: 0.0000
+2025-11-06 10:42:25,850 - QPLEX - INFO -   Mean Q-values: 0.0000
+2025-11-06 10:42:25,850 - QPLEX - INFO -   Mean epsilon: 0.0000
+2025-11-06 10:42:25,850 - QPLEX - INFO -   Buffer size: 2001
+2025-11-06 10:42:25,850 - QPLEX - INFO - Evaluating agent...
+2025-11-06 10:51:54,740 - QPLEX - INFO - Evaluation results:
+2025-11-06 10:51:54,740 - QPLEX - INFO -   Mean episode reward: 473.70 ± 157.54
+2025-11-06 10:51:54,741 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 10:51:54,741 - QPLEX - INFO -   Mean coverage rate: 0.3000
+2025-11-06 10:51:54,741 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 10:52:07,332 - QPLEX - INFO - Timestep 4000/40000
+2025-11-06 10:52:07,333 - QPLEX - INFO -   Elapsed time: 592.32s
+2025-11-06 10:52:07,333 - QPLEX - INFO -   Episode count: 1
+2025-11-06 10:52:07,333 - QPLEX - INFO -   Mean episode reward: 0.00
+2025-11-06 10:52:07,333 - QPLEX - INFO -   Mean loss: 0.0000
+2025-11-06 10:52:07,333 - QPLEX - INFO -   Mean Q-values: 0.0000
+2025-11-06 10:52:07,335 - QPLEX - INFO -   Mean epsilon: 0.0000
+2025-11-06 10:52:07,335 - QPLEX - INFO -   Buffer size: 4001
+2025-11-06 10:52:07,336 - QPLEX - INFO - Evaluating agent...
+2025-11-06 11:01:37,702 - QPLEX - INFO - Evaluation results:
+2025-11-06 11:01:37,702 - QPLEX - INFO -   Mean episode reward: 467.40 ± 152.16
+2025-11-06 11:01:37,703 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 11:01:37,703 - QPLEX - INFO -   Mean coverage rate: 0.0500
+2025-11-06 11:01:37,703 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 11:02:01,000 - QPLEX - INFO - Timestep 6000/40000
+2025-11-06 11:02:01,001 - QPLEX - INFO -   Elapsed time: 1185.99s
+2025-11-06 11:02:01,001 - QPLEX - INFO -   Episode count: 2
+2025-11-06 11:02:01,001 - QPLEX - INFO -   Mean episode reward: 169.00
+2025-11-06 11:02:01,002 - QPLEX - INFO -   Mean loss: 117002595321831.5156
+2025-11-06 11:02:01,002 - QPLEX - INFO -   Mean Q-values: -77.3663
+2025-11-06 11:02:01,002 - QPLEX - INFO -   Mean epsilon: 0.9875
+2025-11-06 11:02:01,002 - QPLEX - INFO -   Buffer size: 6001
+2025-11-06 11:02:01,003 - QPLEX - INFO - Evaluating agent...
+2025-11-06 11:11:24,849 - QPLEX - INFO - Evaluation results:
+2025-11-06 11:11:24,850 - QPLEX - INFO -   Mean episode reward: 525.40 ± 76.57
+2025-11-06 11:11:24,850 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 11:11:24,850 - QPLEX - INFO -   Mean coverage rate: 0.3250
+2025-11-06 11:11:24,851 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 11:11:52,681 - QPLEX - INFO - Timestep 8000/40000
+2025-11-06 11:11:52,682 - QPLEX - INFO -   Elapsed time: 1777.67s
+2025-11-06 11:11:52,682 - QPLEX - INFO -   Episode count: 3
+2025-11-06 11:11:52,684 - QPLEX - INFO -   Mean episode reward: 173.33
+2025-11-06 11:11:52,684 - QPLEX - INFO -   Mean loss: 49089828454312.7344
+2025-11-06 11:11:52,684 - QPLEX - INFO -   Mean Q-values: -72.4581
+2025-11-06 11:11:52,684 - QPLEX - INFO -   Mean epsilon: 0.9633
+2025-11-06 11:11:52,684 - QPLEX - INFO -   Buffer size: 8001
+2025-11-06 11:11:52,685 - QPLEX - INFO - Evaluating agent...
+2025-11-06 11:21:37,066 - QPLEX - INFO - Evaluation results:
+2025-11-06 11:21:37,067 - QPLEX - INFO -   Mean episode reward: 560.00 ± 48.99
+2025-11-06 11:21:37,067 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 11:21:37,067 - QPLEX - INFO -   Mean coverage rate: 0.3000
+2025-11-06 11:21:37,067 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 11:22:05,250 - QPLEX - INFO - Timestep 10000/40000
+2025-11-06 11:22:05,250 - QPLEX - INFO -   Elapsed time: 2390.24s
+2025-11-06 11:22:05,251 - QPLEX - INFO -   Episode count: 4
+2025-11-06 11:22:05,251 - QPLEX - INFO -   Mean episode reward: 280.00
+2025-11-06 11:22:05,251 - QPLEX - INFO -   Mean loss: 12135926557523.9688
+2025-11-06 11:22:05,251 - QPLEX - INFO -   Mean Q-values: -71.4735
+2025-11-06 11:22:05,251 - QPLEX - INFO -   Mean epsilon: 0.9280
+2025-11-06 11:22:05,252 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 11:22:05,253 - QPLEX - INFO - Evaluating agent...
+2025-11-06 11:33:50,545 - QPLEX - INFO - Evaluation results:
+2025-11-06 11:33:50,546 - QPLEX - INFO -   Mean episode reward: 530.00 ± 64.03
+2025-11-06 11:33:50,546 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 11:33:50,546 - QPLEX - INFO -   Mean coverage rate: 0.3500
+2025-11-06 11:33:50,547 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 11:33:50,680 - QPLEX - INFO - Model saved to ./models/qplex\qplex_model_10000.pth
+2025-11-06 11:34:29,558 - QPLEX - INFO - Timestep 12000/40000
+2025-11-06 11:34:29,559 - QPLEX - INFO -   Elapsed time: 3134.55s
+2025-11-06 11:34:29,560 - QPLEX - INFO -   Episode count: 5
+2025-11-06 11:34:29,560 - QPLEX - INFO -   Mean episode reward: 324.00
+2025-11-06 11:34:29,560 - QPLEX - INFO -   Mean loss: 8581636410277.8877
+2025-11-06 11:34:29,561 - QPLEX - INFO -   Mean Q-values: -70.2667
+2025-11-06 11:34:29,561 - QPLEX - INFO -   Mean epsilon: 0.8827
+2025-11-06 11:34:29,561 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 11:34:29,563 - QPLEX - INFO - Evaluating agent...
+2025-11-06 11:49:07,198 - QPLEX - INFO - Evaluation results:
+2025-11-06 11:49:07,198 - QPLEX - INFO -   Mean episode reward: 540.00 ± 48.99
+2025-11-06 11:49:07,199 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 11:49:07,199 - QPLEX - INFO -   Mean coverage rate: 0.2750
+2025-11-06 11:49:07,199 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 11:49:48,019 - QPLEX - INFO - Timestep 14000/40000
+2025-11-06 11:49:48,019 - QPLEX - INFO -   Elapsed time: 4053.01s
+2025-11-06 11:49:48,020 - QPLEX - INFO -   Episode count: 6
+2025-11-06 11:49:48,020 - QPLEX - INFO -   Mean episode reward: 353.33
+2025-11-06 11:49:48,020 - QPLEX - INFO -   Mean loss: 6491106458943.4883
+2025-11-06 11:49:48,020 - QPLEX - INFO -   Mean Q-values: -75.5707
+2025-11-06 11:49:48,021 - QPLEX - INFO -   Mean epsilon: 0.8397
+2025-11-06 11:49:48,021 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 11:49:48,022 - QPLEX - INFO - Evaluating agent...
+2025-11-06 12:03:53,760 - QPLEX - INFO - Evaluation results:
+2025-11-06 12:03:53,760 - QPLEX - INFO -   Mean episode reward: 577.10 ± 39.49
+2025-11-06 12:03:53,761 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 12:03:53,761 - QPLEX - INFO -   Mean coverage rate: 0.4500
+2025-11-06 12:03:53,761 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 12:04:31,223 - QPLEX - INFO - Timestep 16000/40000
+2025-11-06 12:04:31,225 - QPLEX - INFO -   Elapsed time: 4936.21s
+2025-11-06 12:04:31,225 - QPLEX - INFO -   Episode count: 7
+2025-11-06 12:04:31,225 - QPLEX - INFO -   Mean episode reward: 388.57
+2025-11-06 12:04:31,226 - QPLEX - INFO -   Mean loss: 5669882713079.8076
+2025-11-06 12:04:31,226 - QPLEX - INFO -   Mean Q-values: -75.8258
+2025-11-06 12:04:31,226 - QPLEX - INFO -   Mean epsilon: 0.7987
+2025-11-06 12:04:31,226 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 12:04:31,228 - QPLEX - INFO - Evaluating agent...
+2025-11-06 12:17:04,311 - QPLEX - INFO - Evaluation results:
+2025-11-06 12:17:04,312 - QPLEX - INFO -   Mean episode reward: 550.00 ± 50.00
+2025-11-06 12:17:04,312 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 12:17:04,312 - QPLEX - INFO -   Mean coverage rate: 0.1750
+2025-11-06 12:17:04,314 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 12:17:34,576 - QPLEX - INFO - Timestep 18000/40000
+2025-11-06 12:17:34,578 - QPLEX - INFO -   Elapsed time: 5719.56s
+2025-11-06 12:17:34,578 - QPLEX - INFO -   Episode count: 8
+2025-11-06 12:17:34,578 - QPLEX - INFO -   Mean episode reward: 402.50
+2025-11-06 12:17:34,579 - QPLEX - INFO -   Mean loss: 4962332785541.1201
+2025-11-06 12:17:34,579 - QPLEX - INFO -   Mean Q-values: -55.7415
+2025-11-06 12:17:34,579 - QPLEX - INFO -   Mean epsilon: 0.7598
+2025-11-06 12:17:34,579 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 12:17:34,580 - QPLEX - INFO - Evaluating agent...
+2025-11-06 12:28:36,187 - QPLEX - INFO - Evaluation results:
+2025-11-06 12:28:36,187 - QPLEX - INFO -   Mean episode reward: 570.00 ± 45.83
+2025-11-06 12:28:36,187 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 12:28:36,187 - QPLEX - INFO -   Mean coverage rate: 0.4000
+2025-11-06 12:28:36,187 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 12:29:06,668 - QPLEX - INFO - Timestep 20000/40000
+2025-11-06 12:29:06,668 - QPLEX - INFO -   Elapsed time: 6411.66s
+2025-11-06 12:29:06,672 - QPLEX - INFO -   Episode count: 9
+2025-11-06 12:29:06,672 - QPLEX - INFO -   Mean episode reward: 413.33
+2025-11-06 12:29:06,672 - QPLEX - INFO -   Mean loss: 3656803706830.8481
+2025-11-06 12:29:06,672 - QPLEX - INFO -   Mean Q-values: -42.8582
+2025-11-06 12:29:06,674 - QPLEX - INFO -   Mean epsilon: 0.7227
+2025-11-06 12:29:06,674 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 12:29:06,674 - QPLEX - INFO - Evaluating agent...
+2025-11-06 12:39:25,214 - QPLEX - INFO - Evaluation results:
+2025-11-06 12:39:25,215 - QPLEX - INFO -   Mean episode reward: 550.00 ± 50.00
+2025-11-06 12:39:25,215 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 12:39:25,215 - QPLEX - INFO -   Mean coverage rate: 0.5500
+2025-11-06 12:39:25,215 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 12:39:25,346 - QPLEX - INFO - Model saved to ./models/qplex\qplex_model_20000.pth
+2025-11-06 12:39:25,354 - QPLEX - INFO - Episode 10: Reward = 600.00, Length = 2000
+2025-11-06 12:39:52,983 - QPLEX - INFO - Timestep 22000/40000
+2025-11-06 12:39:52,983 - QPLEX - INFO -   Elapsed time: 7057.97s
+2025-11-06 12:39:52,983 - QPLEX - INFO -   Episode count: 10
+2025-11-06 12:39:52,984 - QPLEX - INFO -   Mean episode reward: 432.00
+2025-11-06 12:39:52,984 - QPLEX - INFO -   Mean loss: 3271017023537.1519
+2025-11-06 12:39:52,984 - QPLEX - INFO -   Mean Q-values: -40.0486
+2025-11-06 12:39:52,984 - QPLEX - INFO -   Mean epsilon: 0.6875
+2025-11-06 12:39:52,985 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 12:39:52,986 - QPLEX - INFO - Evaluating agent...
+2025-11-06 13:06:15,337 - QPLEX - INFO - Evaluation results:
+2025-11-06 13:06:15,337 - QPLEX - INFO -   Mean episode reward: 580.00 ± 40.00
+2025-11-06 13:06:15,337 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 13:06:15,337 - QPLEX - INFO -   Mean coverage rate: 0.2250
+2025-11-06 13:06:15,337 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 13:06:41,986 - QPLEX - INFO - Timestep 24000/40000
+2025-11-06 13:06:41,986 - QPLEX - INFO -   Elapsed time: 8666.97s
+2025-11-06 13:06:41,986 - QPLEX - INFO -   Episode count: 11
+2025-11-06 13:06:41,986 - QPLEX - INFO -   Mean episode reward: 447.27
+2025-11-06 13:06:41,986 - QPLEX - INFO -   Mean loss: 2859555695853.5679
+2025-11-06 13:06:41,986 - QPLEX - INFO -   Mean Q-values: -32.2993
+2025-11-06 13:06:41,986 - QPLEX - INFO -   Mean epsilon: 0.6539
+2025-11-06 13:06:41,986 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 13:06:41,986 - QPLEX - INFO - Evaluating agent...
+2025-11-06 13:16:57,903 - QPLEX - INFO - Evaluation results:
+2025-11-06 13:16:57,903 - QPLEX - INFO -   Mean episode reward: 560.00 ± 48.99
+2025-11-06 13:16:57,903 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 13:16:57,903 - QPLEX - INFO -   Mean coverage rate: 0.3250
+2025-11-06 13:16:57,903 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 13:17:28,469 - QPLEX - INFO - Timestep 26000/40000
+2025-11-06 13:17:28,469 - QPLEX - INFO -   Elapsed time: 9313.46s
+2025-11-06 13:17:28,469 - QPLEX - INFO -   Episode count: 12
+2025-11-06 13:17:28,469 - QPLEX - INFO -   Mean episode reward: 460.00
+2025-11-06 13:17:28,480 - QPLEX - INFO -   Mean loss: 2261685304377.3442
+2025-11-06 13:17:28,480 - QPLEX - INFO -   Mean Q-values: -22.9746
+2025-11-06 13:17:28,480 - QPLEX - INFO -   Mean epsilon: 0.6220
+2025-11-06 13:17:28,480 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 13:17:28,480 - QPLEX - INFO - Evaluating agent...
+2025-11-06 13:27:17,694 - QPLEX - INFO - Evaluation results:
+2025-11-06 13:27:17,694 - QPLEX - INFO -   Mean episode reward: 550.00 ± 67.08
+2025-11-06 13:27:17,694 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 13:27:17,694 - QPLEX - INFO -   Mean coverage rate: 0.3250
+2025-11-06 13:27:17,694 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 13:27:47,618 - QPLEX - INFO - Timestep 28000/40000
+2025-11-06 13:27:47,618 - QPLEX - INFO -   Elapsed time: 9932.61s
+2025-11-06 13:27:47,618 - QPLEX - INFO -   Episode count: 13
+2025-11-06 13:27:47,618 - QPLEX - INFO -   Mean episode reward: 470.77
+2025-11-06 13:27:47,618 - QPLEX - INFO -   Mean loss: 1196286926249.9839
+2025-11-06 13:27:47,618 - QPLEX - INFO -   Mean Q-values: -16.0204
+2025-11-06 13:27:47,618 - QPLEX - INFO -   Mean epsilon: 0.5917
+2025-11-06 13:27:47,618 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 13:27:47,618 - QPLEX - INFO - Evaluating agent...
+2025-11-06 13:37:56,983 - QPLEX - INFO - Evaluation results:
+2025-11-06 13:37:56,983 - QPLEX - INFO -   Mean episode reward: 590.00 ± 30.00
+2025-11-06 13:37:56,983 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 13:37:56,983 - QPLEX - INFO -   Mean coverage rate: 0.2750
+2025-11-06 13:37:56,983 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 13:38:22,787 - QPLEX - INFO - Timestep 30000/40000
+2025-11-06 13:38:22,787 - QPLEX - INFO -   Elapsed time: 10567.77s
+2025-11-06 13:38:22,787 - QPLEX - INFO -   Episode count: 14
+2025-11-06 13:38:22,787 - QPLEX - INFO -   Mean episode reward: 476.21
+2025-11-06 13:38:22,787 - QPLEX - INFO -   Mean loss: 666174617460.7360
+2025-11-06 13:38:22,787 - QPLEX - INFO -   Mean Q-values: -9.6581
+2025-11-06 13:38:22,787 - QPLEX - INFO -   Mean epsilon: 0.5628
+2025-11-06 13:38:22,787 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 13:38:22,787 - QPLEX - INFO - Evaluating agent...
+2025-11-06 13:48:37,523 - QPLEX - INFO - Evaluation results:
+2025-11-06 13:48:37,523 - QPLEX - INFO -   Mean episode reward: 560.00 ± 48.99
+2025-11-06 13:48:37,523 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 13:48:37,523 - QPLEX - INFO -   Mean coverage rate: 0.0250
+2025-11-06 13:48:37,537 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 13:48:37,665 - QPLEX - INFO - Model saved to ./models/qplex\qplex_model_30000.pth
+2025-11-06 13:49:06,684 - QPLEX - INFO - Timestep 32000/40000
+2025-11-06 13:49:06,684 - QPLEX - INFO -   Elapsed time: 11211.67s
+2025-11-06 13:49:06,685 - QPLEX - INFO -   Episode count: 15
+2025-11-06 13:49:06,685 - QPLEX - INFO -   Mean episode reward: 477.80
+2025-11-06 13:49:06,685 - QPLEX - INFO -   Mean loss: 699076739432.4480
+2025-11-06 13:49:06,685 - QPLEX - INFO -   Mean Q-values: -4.7637
+2025-11-06 13:49:06,685 - QPLEX - INFO -   Mean epsilon: 0.5354
+2025-11-06 13:49:06,685 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 13:49:06,685 - QPLEX - INFO - Evaluating agent...
+2025-11-06 13:59:17,437 - QPLEX - INFO - Evaluation results:
+2025-11-06 13:59:17,437 - QPLEX - INFO -   Mean episode reward: 550.00 ± 67.08
+2025-11-06 13:59:17,437 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 13:59:17,437 - QPLEX - INFO -   Mean coverage rate: 0.0250
+2025-11-06 13:59:17,437 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 13:59:46,942 - QPLEX - INFO - Timestep 34000/40000
+2025-11-06 13:59:46,942 - QPLEX - INFO -   Elapsed time: 11851.93s
+2025-11-06 13:59:46,942 - QPLEX - INFO -   Episode count: 16
+2025-11-06 13:59:46,946 - QPLEX - INFO -   Mean episode reward: 485.44
+2025-11-06 13:59:46,946 - QPLEX - INFO -   Mean loss: 696922881097.7280
+2025-11-06 13:59:46,946 - QPLEX - INFO -   Mean Q-values: -2.7153
+2025-11-06 13:59:46,946 - QPLEX - INFO -   Mean epsilon: 0.5093
+2025-11-06 13:59:46,946 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 13:59:46,946 - QPLEX - INFO - Evaluating agent...
+2025-11-06 14:09:45,903 - QPLEX - INFO - Evaluation results:
+2025-11-06 14:09:45,903 - QPLEX - INFO -   Mean episode reward: 560.00 ± 48.99
+2025-11-06 14:09:45,903 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 14:09:45,903 - QPLEX - INFO -   Mean coverage rate: 0.3250
+2025-11-06 14:09:45,903 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 14:10:19,368 - QPLEX - INFO - Timestep 36000/40000
+2025-11-06 14:10:19,368 - QPLEX - INFO -   Elapsed time: 12484.36s
+2025-11-06 14:10:19,368 - QPLEX - INFO -   Episode count: 17
+2025-11-06 14:10:19,368 - QPLEX - INFO -   Mean episode reward: 486.29
+2025-11-06 14:10:19,368 - QPLEX - INFO -   Mean loss: 994752207233.0240
+2025-11-06 14:10:19,368 - QPLEX - INFO -   Mean Q-values: -11.8674
+2025-11-06 14:10:19,368 - QPLEX - INFO -   Mean epsilon: 0.4844
+2025-11-06 14:10:19,368 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 14:10:19,372 - QPLEX - INFO - Evaluating agent...
+2025-11-06 14:20:35,786 - QPLEX - INFO - Evaluation results:
+2025-11-06 14:20:35,786 - QPLEX - INFO -   Mean episode reward: 560.00 ± 48.99
+2025-11-06 14:20:35,786 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 14:20:35,786 - QPLEX - INFO -   Mean coverage rate: 0.2000
+2025-11-06 14:20:35,786 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 14:21:06,067 - QPLEX - INFO - Timestep 38000/40000
+2025-11-06 14:21:06,067 - QPLEX - INFO -   Elapsed time: 13131.05s
+2025-11-06 14:21:06,067 - QPLEX - INFO -   Episode count: 18
+2025-11-06 14:21:06,067 - QPLEX - INFO -   Mean episode reward: 481.50
+2025-11-06 14:21:06,067 - QPLEX - INFO -   Mean loss: 907319530487.8080
+2025-11-06 14:21:06,067 - QPLEX - INFO -   Mean Q-values: -15.8061
+2025-11-06 14:21:06,067 - QPLEX - INFO -   Mean epsilon: 0.4608
+2025-11-06 14:21:06,067 - QPLEX - INFO -   Buffer size: 10000
+2025-11-06 14:21:06,067 - QPLEX - INFO - Evaluating agent...
+2025-11-06 14:31:25,445 - QPLEX - INFO - Evaluation results:
+2025-11-06 14:31:25,445 - QPLEX - INFO -   Mean episode reward: 580.00 ± 40.00
+2025-11-06 14:31:25,445 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 14:31:25,445 - QPLEX - INFO -   Mean coverage rate: 0.4250
+2025-11-06 14:31:25,445 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 14:31:53,723 - QPLEX - INFO - Final evaluation...
+2025-11-06 14:51:38,472 - QPLEX - INFO - Final evaluation results:
+2025-11-06 14:51:38,472 - QPLEX - INFO -   Mean episode reward: 570.00 ± 45.83
+2025-11-06 14:51:38,472 - QPLEX - INFO -   Mean episode length: 10001.00
+2025-11-06 14:51:38,472 - QPLEX - INFO -   Mean coverage rate: 0.3500
+2025-11-06 14:51:38,472 - QPLEX - INFO -   Mean transport rate: 0.0000
+2025-11-06 14:51:38,575 - QPLEX - INFO - Final model saved to ./models/qplex\qplex_final_model.pth
+2025-11-06 14:51:38,575 - QPLEX - INFO - Training completed!

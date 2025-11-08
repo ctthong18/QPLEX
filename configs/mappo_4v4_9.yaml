@@ -1,0 +1,113 @@
+# MAPPO Configuration for MATE 4v4 environment (Detailed)
+# This config matches QPLEX structure for easy comparison
+name: "MAPPO_4v4_9"
+env_name: "MATE-4v4-9"
+seed: 42
+
+# Environment settings (same as QPLEX)
+env:
+  config_file: "mate/assets/MATE-4v4-9.yaml"
+  max_episode_steps: 2000
+  reward_type: "dense"
+  render_mode: "human"  # Set to "human" for visualization
+  window_size: 800
+
+# Training settings (adjusted for on-policy MAPPO)
+training:
+  total_timesteps: 40000  # Same as QPLEX for fair comparison
+  learning_starts: 0  # MAPPO is on-policy, starts learning immediately
+  n_episodes: 1000
+
+# Algorithm settings
+algorithm:
+  name: "MAPPO"
+  
+  # Learning rates (comparable to QPLEX learning_rate: 0.0005)
+  lr: 5e-4  # Actor learning rate (slightly higher than default)
+  critic_lr: 5e-4  # Critic learning rate
+  opti_eps: 1e-5
+  weight_decay: 0.0
+  
+  # PPO hyperparameters
+  clip_param: 0.2  # Standard PPO clip parameter
+  ppo_epoch: 10  # Number of PPO epochs per update
+  num_mini_batch: 4  # Number of mini-batches (similar to QPLEX train_freq: 4)
+  data_chunk_length: 10  # For recurrent policies
+  
+  # Loss coefficients
+  value_loss_coef: 0.5  # Value loss coefficient
+  entropy_coef: 0.01  # Entropy coefficient (for exploration, similar to epsilon in QPLEX)
+  max_grad_norm: 10.0
+  use_max_grad_norm: true
+  
+  # Value function settings
+  use_clipped_value_loss: true
+  use_huber_loss: false
+  huber_delta: 10.0
+  use_popart: false  # Can enable for better value normalization
+  use_valuenorm: false
+  use_value_active_masks: false
+  
+  # Policy settings
+  use_policy_active_masks: false
+  
+  # Discount and GAE (same as QPLEX gamma)
+  gamma: 0.99  # Same discount factor as QPLEX
+  gae_lambda: 0.95  # GAE lambda parameter
+  
+  # Network architecture (comparable to QPLEX network.q_network.hidden_dims: [256, 256])
+  hidden_size: 256  # Match QPLEX hidden dimensions
+  layer_N: 2  # Two layers to match [256, 256]
+  use_orthogonal: true
+  use_ReLU: true  # Same activation as QPLEX
+  gain: 0.01
+  
+  # RNN settings (comparable to QPLEX network.q_network.use_rnn: false)
+  use_recurrent_policy: false  # Match QPLEX (use_rnn: false)
+  use_naive_recurrent_policy: false
+  recurrent_N: 1
+  use_feature_normalization: false
+  stacked_frames: 1
+  
+  # Buffer settings (on-policy, no large buffer needed)
+  episode_length: 200  # Episode length for buffer
+  n_rollout_threads: 1  # Number of parallel environments
+
+# Agent settings (same as QPLEX)
+agents:
+  n_agents: 4
+  obs_dim: null  # Will be set automatically
+  action_dim: null
+  state_dim: null
+
+# Logging and evaluation (same structure as QPLEX)
+logging:
+  level: "INFO"
+  log_interval: 2000  # Same as QPLEX
+  eval_interval: 2000  # Same as QPLEX
+  save_interval: 100000  # Same as QPLEX
+  log_dir: "./logs/mappo"
+  model_dir: "./models/mappo"
+  tensorboard: false  # Can enable if needed
+  wandb: false
+  wandb_project: "mappo-mate"
+  wandb_entity: null
+
+# Evaluation settings (same as QPLEX)
+evaluation:
+  n_eval_episodes: 10  # Same as QPLEX
+  eval_deterministic: true
+  render_eval: false
+  save_videos: false
+  video_dir: "./videos/mappo"
+
+# Device settings (same as QPLEX)
+device:
+  use_cuda: true
+  cuda_device: 0
+
+# Reproducibility (same as QPLEX)
+reproducibility:
+  deterministic: true
+  benchmark: false
+

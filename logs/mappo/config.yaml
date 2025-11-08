@@ -1,0 +1,76 @@
+agents:
+  action_dim: null
+  n_agents: 4
+  obs_dim: null
+  state_dim: null
+algorithm:
+  clip_param: 0.2
+  critic_lr: 5e-4
+  data_chunk_length: 10
+  entropy_coef: 0.01
+  episode_length: 200
+  gae_lambda: 0.95
+  gain: 0.01
+  gamma: 0.99
+  hidden_size: 256
+  huber_delta: 10.0
+  layer_N: 2
+  lr: 5e-4
+  max_grad_norm: 10.0
+  n_rollout_threads: 1
+  name: MAPPO
+  num_mini_batch: 4
+  opti_eps: 1e-5
+  ppo_epoch: 10
+  recurrent_N: 1
+  stacked_frames: 1
+  use_ReLU: true
+  use_clipped_value_loss: true
+  use_feature_normalization: false
+  use_huber_loss: false
+  use_max_grad_norm: true
+  use_naive_recurrent_policy: false
+  use_orthogonal: true
+  use_policy_active_masks: false
+  use_popart: false
+  use_recurrent_policy: false
+  use_value_active_masks: false
+  use_valuenorm: false
+  value_loss_coef: 0.5
+  weight_decay: 0.0
+device:
+  cuda_device: 0
+  use_cuda: true
+env:
+  config_file: mate/assets/MATE-4v4-9.yaml
+  max_episode_steps: 2000
+  render_mode: human
+  reward_type: dense
+  window_size: 800
+env_name: MATE-4v4-9
+evaluation:
+  eval_deterministic: true
+  n_eval_episodes: 10
+  render_eval: false
+  save_videos: false
+  video_dir: ./videos/mappo
+logging:
+  eval_interval: 2000
+  level: INFO
+  log_dir: ./logs/mappo
+  log_interval: 2000
+  model_dir: ./models/mappo
+  save_interval: 100000
+  tensorboard: false
+  wandb: false
+  wandb_entity: null
+  wandb_project: mappo-mate
+name: MAPPO_4v4_9
+reproducibility:
+  benchmark: false
+  deterministic: true
+seed: 42
+training:
+  learning_starts: 0
+  n_episodes: 1000
+  total_timesteps: 40000

@@ -1,0 +1,417 @@
+2025-11-07 09:37:13,706 - MAPPO - INFO - Starting MAPPO training on MATE environment
+2025-11-07 09:37:13,706 - MAPPO - INFO - Configuration: configs/mappo_4v4_9.yaml
+2025-11-07 09:37:13,708 - MAPPO - INFO - Seed: 42
+2025-11-07 09:37:13,714 - MAPPO - INFO - Loaded config: configs/mappo_4v4_9.yaml
+2025-11-07 09:37:13,714 - MAPPO - INFO - Loaded config: configs/mappo_4v4_9.yaml
+2025-11-07 09:37:13,796 - MAPPO - INFO - Using device cuda
+2025-11-07 09:37:13,796 - MAPPO - INFO - Using device cuda
+2025-11-07 09:37:13,857 - MAPPO - INFO - Env created
+2025-11-07 09:37:13,857 - MAPPO - INFO - Env created
+2025-11-07 09:37:13,857 - MAPPO - INFO - obs_dim=106, act_dim=2, state_dim=156, n_agents=4
+2025-11-07 09:37:13,857 - MAPPO - INFO - obs_dim=106, act_dim=2, state_dim=156, n_agents=4
+2025-11-07 09:37:16,416 - MAPPO - INFO - Policy created
+2025-11-07 09:37:16,416 - MAPPO - INFO - Policy created
+2025-11-07 09:37:16,416 - MAPPO - INFO - MAPPO trainer created
+2025-11-07 09:37:16,416 - MAPPO - INFO - MAPPO trainer created
+2025-11-07 09:37:16,420 - MAPPO - INFO - Buffer created
+2025-11-07 09:37:16,420 - MAPPO - INFO - Buffer created
+2025-11-07 09:37:16,424 - MAPPO - INFO - Starting training...
+2025-11-07 09:37:16,424 - MAPPO - INFO - Starting training...
+2025-11-07 09:37:35,264 - MAPPO - INFO - Step 2000 / 40000, elapsed 18.8s
+2025-11-07 09:37:35,264 - MAPPO - INFO - Step 2000 / 40000, elapsed 18.8s
+2025-11-07 09:37:35,264 - MAPPO - INFO -   Episode count: 0
+2025-11-07 09:37:35,264 - MAPPO - INFO -   Episode count: 0
+2025-11-07 09:37:35,280 - MAPPO - INFO -   Mean episode reward: 208.00
+2025-11-07 09:37:35,280 - MAPPO - INFO -   Mean episode reward: 208.00
+2025-11-07 09:37:35,280 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 09:37:35,280 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 09:37:35,280 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 09:37:35,280 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 09:48:50,362 - MAPPO - INFO - Evaluation @ step 2000:
+2025-11-07 09:48:50,362 - MAPPO - INFO - Evaluation @ step 2000:
+2025-11-07 09:48:50,363 - MAPPO - INFO -   Mean episode reward: 183.00 ± 190.92
+2025-11-07 09:48:50,363 - MAPPO - INFO -   Mean episode reward: 183.00 ± 190.92
+2025-11-07 09:48:50,363 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 09:48:50,363 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 09:48:50,364 - MAPPO - INFO -   Mean coverage rate: 0.0000
+2025-11-07 09:48:50,364 - MAPPO - INFO -   Mean coverage rate: 0.0000
+2025-11-07 09:48:50,364 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 09:48:50,364 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 09:49:14,838 - MAPPO - INFO - Step 4000 / 40000, elapsed 718.4s
+2025-11-07 09:49:14,838 - MAPPO - INFO - Step 4000 / 40000, elapsed 718.4s
+2025-11-07 09:49:14,840 - MAPPO - INFO -   Episode count: 1
+2025-11-07 09:49:14,840 - MAPPO - INFO -   Episode count: 1
+2025-11-07 09:49:14,840 - MAPPO - INFO -   Mean episode reward: 824.00
+2025-11-07 09:49:14,840 - MAPPO - INFO -   Mean episode reward: 824.00
+2025-11-07 09:49:14,840 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 09:49:14,840 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 09:49:14,842 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 09:49:14,842 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:03:00,496 - MAPPO - INFO - Evaluation @ step 4000:
+2025-11-07 10:03:00,496 - MAPPO - INFO - Evaluation @ step 4000:
+2025-11-07 10:03:00,496 - MAPPO - INFO -   Mean episode reward: 214.50 ± 196.81
+2025-11-07 10:03:00,496 - MAPPO - INFO -   Mean episode reward: 214.50 ± 196.81
+2025-11-07 10:03:00,497 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:03:00,497 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:03:00,497 - MAPPO - INFO -   Mean coverage rate: 0.0250
+2025-11-07 10:03:00,497 - MAPPO - INFO -   Mean coverage rate: 0.0250
+2025-11-07 10:03:00,499 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:03:00,499 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:03:21,452 - MAPPO - INFO - Step 6000 / 40000, elapsed 1565.0s
+2025-11-07 10:03:21,452 - MAPPO - INFO - Step 6000 / 40000, elapsed 1565.0s
+2025-11-07 10:03:21,452 - MAPPO - INFO -   Episode count: 2
+2025-11-07 10:03:21,452 - MAPPO - INFO -   Episode count: 2
+2025-11-07 10:03:21,453 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 10:03:21,453 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 10:03:21,454 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:03:21,454 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:03:21,454 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:03:21,454 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:20:36,919 - MAPPO - INFO - Evaluation @ step 6000:
+2025-11-07 10:20:36,919 - MAPPO - INFO - Evaluation @ step 6000:
+2025-11-07 10:20:36,919 - MAPPO - INFO -   Mean episode reward: 530.00 ± 100.50
+2025-11-07 10:20:36,919 - MAPPO - INFO -   Mean episode reward: 530.00 ± 100.50
+2025-11-07 10:20:36,920 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:20:36,920 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:20:36,920 - MAPPO - INFO -   Mean coverage rate: 0.2000
+2025-11-07 10:20:36,920 - MAPPO - INFO -   Mean coverage rate: 0.2000
+2025-11-07 10:20:36,920 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:20:36,920 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:21:07,641 - MAPPO - INFO - Step 8000 / 40000, elapsed 2631.2s
+2025-11-07 10:21:07,641 - MAPPO - INFO - Step 8000 / 40000, elapsed 2631.2s
+2025-11-07 10:21:07,642 - MAPPO - INFO -   Episode count: 3
+2025-11-07 10:21:07,642 - MAPPO - INFO -   Episode count: 3
+2025-11-07 10:21:07,643 - MAPPO - INFO -   Mean episode reward: 2080.00
+2025-11-07 10:21:07,643 - MAPPO - INFO -   Mean episode reward: 2080.00
+2025-11-07 10:21:07,644 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:21:07,644 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:21:07,644 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:21:07,644 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:38:41,716 - MAPPO - INFO - Evaluation @ step 8000:
+2025-11-07 10:38:41,716 - MAPPO - INFO - Evaluation @ step 8000:
+2025-11-07 10:38:41,717 - MAPPO - INFO -   Mean episode reward: 560.00 ± 48.99
+2025-11-07 10:38:41,717 - MAPPO - INFO -   Mean episode reward: 560.00 ± 48.99
+2025-11-07 10:38:41,717 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:38:41,717 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:38:41,718 - MAPPO - INFO -   Mean coverage rate: 0.1250
+2025-11-07 10:38:41,718 - MAPPO - INFO -   Mean coverage rate: 0.1250
+2025-11-07 10:38:41,718 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:38:41,718 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:39:11,467 - MAPPO - INFO - Step 10000 / 40000, elapsed 3715.0s
+2025-11-07 10:39:11,467 - MAPPO - INFO - Step 10000 / 40000, elapsed 3715.0s
+2025-11-07 10:39:11,467 - MAPPO - INFO -   Episode count: 4
+2025-11-07 10:39:11,467 - MAPPO - INFO -   Episode count: 4
+2025-11-07 10:39:11,468 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 10:39:11,468 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 10:39:11,468 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:39:11,468 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:39:11,469 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:39:11,469 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:55:21,147 - MAPPO - INFO - Evaluation @ step 10000:
+2025-11-07 10:55:21,147 - MAPPO - INFO - Evaluation @ step 10000:
+2025-11-07 10:55:21,148 - MAPPO - INFO -   Mean episode reward: 530.00 ± 64.03
+2025-11-07 10:55:21,148 - MAPPO - INFO -   Mean episode reward: 530.00 ± 64.03
+2025-11-07 10:55:21,148 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:55:21,148 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 10:55:21,149 - MAPPO - INFO -   Mean coverage rate: 0.4250
+2025-11-07 10:55:21,149 - MAPPO - INFO -   Mean coverage rate: 0.4250
+2025-11-07 10:55:21,149 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:55:21,149 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 10:55:47,183 - MAPPO - INFO - Step 12000 / 40000, elapsed 4710.8s
+2025-11-07 10:55:47,183 - MAPPO - INFO - Step 12000 / 40000, elapsed 4710.8s
+2025-11-07 10:55:47,183 - MAPPO - INFO -   Episode count: 5
+2025-11-07 10:55:47,183 - MAPPO - INFO -   Episode count: 5
+2025-11-07 10:55:47,184 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 10:55:47,184 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 10:55:47,184 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:55:47,184 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 10:55:47,185 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 10:55:47,185 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 11:12:28,855 - MAPPO - INFO - Evaluation @ step 12000:
+2025-11-07 11:12:28,855 - MAPPO - INFO - Evaluation @ step 12000:
+2025-11-07 11:12:28,855 - MAPPO - INFO -   Mean episode reward: 533.00 ± 44.73
+2025-11-07 11:12:28,855 - MAPPO - INFO -   Mean episode reward: 533.00 ± 44.73
+2025-11-07 11:12:28,856 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 11:12:28,856 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 11:12:28,856 - MAPPO - INFO -   Mean coverage rate: 0.0750
+2025-11-07 11:12:28,856 - MAPPO - INFO -   Mean coverage rate: 0.0750
+2025-11-07 11:12:28,857 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 11:12:28,857 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 11:13:02,797 - MAPPO - INFO - Step 14000 / 40000, elapsed 5746.4s
+2025-11-07 11:13:02,797 - MAPPO - INFO - Step 14000 / 40000, elapsed 5746.4s
+2025-11-07 11:13:02,798 - MAPPO - INFO -   Episode count: 6
+2025-11-07 11:13:02,798 - MAPPO - INFO -   Episode count: 6
+2025-11-07 11:13:02,798 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 11:13:02,798 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 11:13:02,799 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 11:13:02,799 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 11:13:02,799 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 11:13:02,799 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 11:29:54,513 - MAPPO - INFO - Evaluation @ step 14000:
+2025-11-07 11:29:54,513 - MAPPO - INFO - Evaluation @ step 14000:
+2025-11-07 11:29:54,514 - MAPPO - INFO -   Mean episode reward: 580.00 ± 40.00
+2025-11-07 11:29:54,514 - MAPPO - INFO -   Mean episode reward: 580.00 ± 40.00
+2025-11-07 11:29:54,514 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 11:29:54,514 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 11:29:54,514 - MAPPO - INFO -   Mean coverage rate: 0.1250
+2025-11-07 11:29:54,514 - MAPPO - INFO -   Mean coverage rate: 0.1250
+2025-11-07 11:29:54,515 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 11:29:54,515 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 11:30:27,329 - MAPPO - INFO - Step 16000 / 40000, elapsed 6790.9s
+2025-11-07 11:30:27,329 - MAPPO - INFO - Step 16000 / 40000, elapsed 6790.9s
+2025-11-07 11:30:27,330 - MAPPO - INFO -   Episode count: 7
+2025-11-07 11:30:27,330 - MAPPO - INFO -   Episode count: 7
+2025-11-07 11:30:27,330 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 11:30:27,330 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 11:30:27,332 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 11:30:27,332 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 11:30:27,332 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 11:30:27,332 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 11:47:52,586 - MAPPO - INFO - Evaluation @ step 16000:
+2025-11-07 11:47:52,586 - MAPPO - INFO - Evaluation @ step 16000:
+2025-11-07 11:47:52,587 - MAPPO - INFO -   Mean episode reward: 550.00 ± 50.00
+2025-11-07 11:47:52,587 - MAPPO - INFO -   Mean episode reward: 550.00 ± 50.00
+2025-11-07 11:47:52,587 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 11:47:52,587 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 11:47:52,588 - MAPPO - INFO -   Mean coverage rate: 0.2500
+2025-11-07 11:47:52,588 - MAPPO - INFO -   Mean coverage rate: 0.2500
+2025-11-07 11:47:52,588 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 11:47:52,588 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 11:48:33,282 - MAPPO - INFO - Step 18000 / 40000, elapsed 7876.9s
+2025-11-07 11:48:33,282 - MAPPO - INFO - Step 18000 / 40000, elapsed 7876.9s
+2025-11-07 11:48:33,288 - MAPPO - INFO -   Episode count: 8
+2025-11-07 11:48:33,288 - MAPPO - INFO -   Episode count: 8
+2025-11-07 11:48:33,293 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 11:48:33,293 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 11:48:33,309 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 11:48:33,309 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 11:48:33,315 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 11:48:33,315 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:05:42,530 - MAPPO - INFO - Evaluation @ step 18000:
+2025-11-07 12:05:42,530 - MAPPO - INFO - Evaluation @ step 18000:
+2025-11-07 12:05:42,532 - MAPPO - INFO -   Mean episode reward: 570.00 ± 45.83
+2025-11-07 12:05:42,532 - MAPPO - INFO -   Mean episode reward: 570.00 ± 45.83
+2025-11-07 12:05:42,533 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:05:42,533 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:05:42,534 - MAPPO - INFO -   Mean coverage rate: 0.2750
+2025-11-07 12:05:42,534 - MAPPO - INFO -   Mean coverage rate: 0.2750
+2025-11-07 12:05:42,534 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:05:42,534 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:06:10,737 - MAPPO - INFO - Step 20000 / 40000, elapsed 8934.3s
+2025-11-07 12:06:10,737 - MAPPO - INFO - Step 20000 / 40000, elapsed 8934.3s
+2025-11-07 12:06:10,738 - MAPPO - INFO -   Episode count: 9
+2025-11-07 12:06:10,738 - MAPPO - INFO -   Episode count: 9
+2025-11-07 12:06:10,738 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 12:06:10,738 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 12:06:10,738 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:06:10,738 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:06:10,739 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:06:10,739 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:21:32,127 - MAPPO - INFO - Evaluation @ step 20000:
+2025-11-07 12:21:32,127 - MAPPO - INFO - Evaluation @ step 20000:
+2025-11-07 12:21:32,128 - MAPPO - INFO -   Mean episode reward: 546.40 ± 47.50
+2025-11-07 12:21:32,128 - MAPPO - INFO -   Mean episode reward: 546.40 ± 47.50
+2025-11-07 12:21:32,129 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:21:32,129 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:21:32,130 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 12:21:32,130 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 12:21:32,130 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:21:32,130 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:21:32,142 - MAPPO - INFO - Episode 10 reward=2400.000 length=2000
+2025-11-07 12:21:32,142 - MAPPO - INFO - Episode 10 reward=2400.000 length=2000
+2025-11-07 12:21:57,204 - MAPPO - INFO - Step 22000 / 40000, elapsed 9880.8s
+2025-11-07 12:21:57,204 - MAPPO - INFO - Step 22000 / 40000, elapsed 9880.8s
+2025-11-07 12:21:57,204 - MAPPO - INFO -   Episode count: 10
+2025-11-07 12:21:57,204 - MAPPO - INFO -   Episode count: 10
+2025-11-07 12:21:57,205 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 12:21:57,205 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 12:21:57,205 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:21:57,205 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:21:57,205 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:21:57,205 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:37:22,319 - MAPPO - INFO - Evaluation @ step 22000:
+2025-11-07 12:37:22,319 - MAPPO - INFO - Evaluation @ step 22000:
+2025-11-07 12:37:22,320 - MAPPO - INFO -   Mean episode reward: 564.50 ± 56.06
+2025-11-07 12:37:22,320 - MAPPO - INFO -   Mean episode reward: 564.50 ± 56.06
+2025-11-07 12:37:22,320 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:37:22,320 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:37:22,321 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 12:37:22,321 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 12:37:22,321 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:37:22,321 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:37:48,991 - MAPPO - INFO - Step 24000 / 40000, elapsed 10832.6s
+2025-11-07 12:37:48,991 - MAPPO - INFO - Step 24000 / 40000, elapsed 10832.6s
+2025-11-07 12:37:48,991 - MAPPO - INFO -   Episode count: 11
+2025-11-07 12:37:48,991 - MAPPO - INFO -   Episode count: 11
+2025-11-07 12:37:48,992 - MAPPO - INFO -   Mean episode reward: 1824.00
+2025-11-07 12:37:48,992 - MAPPO - INFO -   Mean episode reward: 1824.00
+2025-11-07 12:37:48,992 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:37:48,992 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:37:48,993 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:37:48,993 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:53:32,092 - MAPPO - INFO - Evaluation @ step 24000:
+2025-11-07 12:53:32,092 - MAPPO - INFO - Evaluation @ step 24000:
+2025-11-07 12:53:32,092 - MAPPO - INFO -   Mean episode reward: 540.00 ± 66.33
+2025-11-07 12:53:32,092 - MAPPO - INFO -   Mean episode reward: 540.00 ± 66.33
+2025-11-07 12:53:32,093 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:53:32,093 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 12:53:32,093 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 12:53:32,093 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 12:53:32,094 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:53:32,094 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 12:54:02,023 - MAPPO - INFO - Step 26000 / 40000, elapsed 11805.6s
+2025-11-07 12:54:02,023 - MAPPO - INFO - Step 26000 / 40000, elapsed 11805.6s
+2025-11-07 12:54:02,024 - MAPPO - INFO -   Episode count: 12
+2025-11-07 12:54:02,024 - MAPPO - INFO -   Episode count: 12
+2025-11-07 12:54:02,024 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 12:54:02,024 - MAPPO - INFO -   Mean episode reward: 2400.00
+2025-11-07 12:54:02,024 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:54:02,024 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 12:54:02,025 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 12:54:02,025 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:10:11,369 - MAPPO - INFO - Evaluation @ step 26000:
+2025-11-07 13:10:11,369 - MAPPO - INFO - Evaluation @ step 26000:
+2025-11-07 13:10:11,370 - MAPPO - INFO -   Mean episode reward: 366.80 ± 180.48
+2025-11-07 13:10:11,370 - MAPPO - INFO -   Mean episode reward: 366.80 ± 180.48
+2025-11-07 13:10:11,371 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:10:11,371 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:10:11,371 - MAPPO - INFO -   Mean coverage rate: 0.1500
+2025-11-07 13:10:11,371 - MAPPO - INFO -   Mean coverage rate: 0.1500
+2025-11-07 13:10:11,372 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:10:11,372 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:10:40,008 - MAPPO - INFO - Step 28000 / 40000, elapsed 12803.6s
+2025-11-07 13:10:40,008 - MAPPO - INFO - Step 28000 / 40000, elapsed 12803.6s
+2025-11-07 13:10:40,009 - MAPPO - INFO -   Episode count: 13
+2025-11-07 13:10:40,009 - MAPPO - INFO -   Episode count: 13
+2025-11-07 13:10:40,009 - MAPPO - INFO -   Mean episode reward: 2112.00
+2025-11-07 13:10:40,009 - MAPPO - INFO -   Mean episode reward: 2112.00
+2025-11-07 13:10:40,010 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:10:40,010 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:10:40,010 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:10:40,010 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:26:16,246 - MAPPO - INFO - Evaluation @ step 28000:
+2025-11-07 13:26:16,246 - MAPPO - INFO - Evaluation @ step 28000:
+2025-11-07 13:26:16,247 - MAPPO - INFO -   Mean episode reward: 559.50 ± 58.61
+2025-11-07 13:26:16,247 - MAPPO - INFO -   Mean episode reward: 559.50 ± 58.61
+2025-11-07 13:26:16,247 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:26:16,247 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:26:16,248 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 13:26:16,248 - MAPPO - INFO -   Mean coverage rate: 0.1750
+2025-11-07 13:26:16,248 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:26:16,248 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:26:41,345 - MAPPO - INFO - Step 30000 / 40000, elapsed 13764.9s
+2025-11-07 13:26:41,345 - MAPPO - INFO - Step 30000 / 40000, elapsed 13764.9s
+2025-11-07 13:26:41,346 - MAPPO - INFO -   Episode count: 14
+2025-11-07 13:26:41,346 - MAPPO - INFO -   Episode count: 14
+2025-11-07 13:26:41,346 - MAPPO - INFO -   Mean episode reward: 408.00
+2025-11-07 13:26:41,346 - MAPPO - INFO -   Mean episode reward: 408.00
+2025-11-07 13:26:41,347 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:26:41,347 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:26:41,347 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:26:41,347 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:41:59,152 - MAPPO - INFO - Evaluation @ step 30000:
+2025-11-07 13:41:59,152 - MAPPO - INFO - Evaluation @ step 30000:
+2025-11-07 13:41:59,152 - MAPPO - INFO -   Mean episode reward: 529.70 ± 74.88
+2025-11-07 13:41:59,152 - MAPPO - INFO -   Mean episode reward: 529.70 ± 74.88
+2025-11-07 13:41:59,153 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:41:59,153 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:41:59,153 - MAPPO - INFO -   Mean coverage rate: 0.3750
+2025-11-07 13:41:59,153 - MAPPO - INFO -   Mean coverage rate: 0.3750
+2025-11-07 13:41:59,153 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:41:59,153 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:42:28,899 - MAPPO - INFO - Step 32000 / 40000, elapsed 14712.5s
+2025-11-07 13:42:28,899 - MAPPO - INFO - Step 32000 / 40000, elapsed 14712.5s
+2025-11-07 13:42:28,899 - MAPPO - INFO -   Episode count: 15
+2025-11-07 13:42:28,899 - MAPPO - INFO -   Episode count: 15
+2025-11-07 13:42:28,900 - MAPPO - INFO -   Mean episode reward: 2128.00
+2025-11-07 13:42:28,900 - MAPPO - INFO -   Mean episode reward: 2128.00
+2025-11-07 13:42:28,900 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:42:28,900 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:42:28,901 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:42:28,901 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:57:32,792 - MAPPO - INFO - Evaluation @ step 32000:
+2025-11-07 13:57:32,792 - MAPPO - INFO - Evaluation @ step 32000:
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean episode reward: 325.10 ± 221.24
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean episode reward: 325.10 ± 221.24
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean coverage rate: 0.1500
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean coverage rate: 0.1500
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:57:32,793 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 13:57:59,681 - MAPPO - INFO - Step 34000 / 40000, elapsed 15643.3s
+2025-11-07 13:57:59,681 - MAPPO - INFO - Step 34000 / 40000, elapsed 15643.3s
+2025-11-07 13:57:59,682 - MAPPO - INFO -   Episode count: 16
+2025-11-07 13:57:59,682 - MAPPO - INFO -   Episode count: 16
+2025-11-07 13:57:59,683 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 13:57:59,683 - MAPPO - INFO -   Mean episode reward: 2000.00
+2025-11-07 13:57:59,683 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:57:59,683 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 13:57:59,684 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 13:57:59,684 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 14:14:03,479 - MAPPO - INFO - Evaluation @ step 34000:
+2025-11-07 14:14:03,479 - MAPPO - INFO - Evaluation @ step 34000:
+2025-11-07 14:14:03,479 - MAPPO - INFO -   Mean episode reward: 503.30 ± 138.96
+2025-11-07 14:14:03,479 - MAPPO - INFO -   Mean episode reward: 503.30 ± 138.96
+2025-11-07 14:14:03,480 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 14:14:03,480 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 14:14:03,480 - MAPPO - INFO -   Mean coverage rate: 0.3750
+2025-11-07 14:14:03,480 - MAPPO - INFO -   Mean coverage rate: 0.3750
+2025-11-07 14:14:03,481 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 14:14:03,481 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 14:14:30,726 - MAPPO - INFO - Step 36000 / 40000, elapsed 16634.3s
+2025-11-07 14:14:30,726 - MAPPO - INFO - Step 36000 / 40000, elapsed 16634.3s
+2025-11-07 14:14:30,726 - MAPPO - INFO -   Episode count: 17
+2025-11-07 14:14:30,726 - MAPPO - INFO -   Episode count: 17
+2025-11-07 14:14:30,726 - MAPPO - INFO -   Mean episode reward: 1600.00
+2025-11-07 14:14:30,726 - MAPPO - INFO -   Mean episode reward: 1600.00
+2025-11-07 14:14:30,727 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 14:14:30,727 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 14:14:30,727 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 14:14:30,727 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 14:30:08,281 - MAPPO - INFO - Evaluation @ step 36000:
+2025-11-07 14:30:08,281 - MAPPO - INFO - Evaluation @ step 36000:
+2025-11-07 14:30:08,283 - MAPPO - INFO -   Mean episode reward: 440.60 ± 165.33
+2025-11-07 14:30:08,283 - MAPPO - INFO -   Mean episode reward: 440.60 ± 165.33
+2025-11-07 14:30:08,283 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 14:30:08,283 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 14:30:08,285 - MAPPO - INFO -   Mean coverage rate: 0.2250
+2025-11-07 14:30:08,285 - MAPPO - INFO -   Mean coverage rate: 0.2250
+2025-11-07 14:30:08,285 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 14:30:08,285 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 14:30:28,816 - MAPPO - INFO - Step 38000 / 40000, elapsed 17592.4s
+2025-11-07 14:30:28,816 - MAPPO - INFO - Step 38000 / 40000, elapsed 17592.4s
+2025-11-07 14:30:28,816 - MAPPO - INFO -   Episode count: 18
+2025-11-07 14:30:28,816 - MAPPO - INFO -   Episode count: 18
+2025-11-07 14:30:28,817 - MAPPO - INFO -   Mean episode reward: 2040.00
+2025-11-07 14:30:28,817 - MAPPO - INFO -   Mean episode reward: 2040.00
+2025-11-07 14:30:28,817 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 14:30:28,817 - MAPPO - INFO -   Mean loss: 0.0000
+2025-11-07 14:30:28,817 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 14:30:28,817 - MAPPO - INFO -   Buffer size: 1
+2025-11-07 14:41:18,817 - MAPPO - INFO - Evaluation @ step 38000:
+2025-11-07 14:41:18,817 - MAPPO - INFO - Evaluation @ step 38000:
+2025-11-07 14:41:18,818 - MAPPO - INFO -   Mean episode reward: 580.00 ± 40.00
+2025-11-07 14:41:18,818 - MAPPO - INFO -   Mean episode reward: 580.00 ± 40.00
+2025-11-07 14:41:18,818 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 14:41:18,818 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 14:41:18,819 - MAPPO - INFO -   Mean coverage rate: 0.1500
+2025-11-07 14:41:18,819 - MAPPO - INFO -   Mean coverage rate: 0.1500
+2025-11-07 14:41:18,820 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 14:41:18,820 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 14:41:38,770 - MAPPO - INFO - Final evaluation...
+2025-11-07 14:41:38,770 - MAPPO - INFO - Final evaluation...
+2025-11-07 15:03:41,445 - MAPPO - INFO - Final evaluation results:
+2025-11-07 15:03:41,445 - MAPPO - INFO - Final evaluation results:
+2025-11-07 15:03:41,446 - MAPPO - INFO -   Mean episode reward: 570.00 ± 45.83
+2025-11-07 15:03:41,446 - MAPPO - INFO -   Mean episode reward: 570.00 ± 45.83
+2025-11-07 15:03:41,447 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 15:03:41,447 - MAPPO - INFO -   Mean episode length: 10001.00
+2025-11-07 15:03:41,447 - MAPPO - INFO -   Mean coverage rate: 0.2500
+2025-11-07 15:03:41,447 - MAPPO - INFO -   Mean coverage rate: 0.2500
+2025-11-07 15:03:41,449 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 15:03:41,449 - MAPPO - INFO -   Mean transport rate: 0.0000
+2025-11-07 15:03:41,514 - MAPPO - INFO - Finished training. Saved final model to ./models/mappo\mappo_final.pt
+2025-11-07 15:03:41,514 - MAPPO - INFO - Finished training. Saved final model to ./models/mappo\mappo_final.pt
+2025-11-07 15:03:41,515 - MAPPO - INFO - Training completed!
+2025-11-07 15:03:41,515 - MAPPO - INFO - Training completed!
