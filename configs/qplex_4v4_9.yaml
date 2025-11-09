@@ -13,7 +13,7 @@ env:
 
 # Training settings
 training:
-  total_timesteps: 40000
+  total_timesteps: 120000
   learning_starts: 5000
   train_freq: 4
   target_update_interval: 200

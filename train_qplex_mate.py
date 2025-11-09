@@ -147,7 +147,7 @@ def evaluate_agent(learner: QPLEXLearner, env: MultiAgentTracking,
     }
 
 
-def train_qplex(config: Dict[str, Any], logger: logging.Logger):
+def train_qplex(config: Dict[str, Any], logger: logging.Logger, resume_path: Optional[str] = None):
     """Main training function."""
     # Set random seeds
     seed = config.get('seed', 42)
@@ -181,6 +181,19 @@ def train_qplex(config: Dict[str, Any], logger: logging.Logger):
     learner.setup(obs_dim, action_dim, state_dim, n_agents)
     logger.info("QPLEX learner created and setup")
     
+    # RESUME LOGIC: Load nếu có checkpoint
+    start_timestep = 0
+    if resume_path is not None:
+        try:
+            logger.info(f"Loading checkpoint from {resume_path}...")
+            learner.load(resume_path)  # Load learner_state, agent, buffer
+            start_timestep = learner.timestep
+            logger.info(f"Resumed successfully! Starting from timestep {start_timestep}, episode {learner.episode_count}")
+            logger.info(f"Buffer size: {learner.buffer.size if learner.buffer else 0}")
+        except Exception as e:
+            logger.error(f"Failed to load checkpoint: {e}. Starting from scratch.")
+            start_timestep = 0
+    
     # Training parameters
     training_config = config['training']
     total_timesteps = training_config['total_timesteps']
@@ -209,31 +222,23 @@ def train_qplex(config: Dict[str, Any], logger: logging.Logger):
     with open(os.path.join(log_dir, 'config.yaml'), 'w') as f:
         yaml.dump(config, f, default_flow_style=False)
     
-    # Training loop
-    logger.info("Starting training...")
+    # Training loop: Bắt đầu từ start_timestep nếu resume
+    logger.info(f"Starting training from timestep {start_timestep}/{total_timesteps}...")
     start_time = time.time()
     
-    episode_count = 0
+    episode_count = learner.episode_count if resume_path else 0
     episode_reward = 0
     episode_length = 0
     
+    # Reset env và hidden states
     obs, info = env.reset()
     camera_obs, target_obs = obs
     state = env.state()
-    
-    # Reset hidden states
     learner.reset_hidden_states()
     
-    for timestep in range(total_timesteps):
-        # Convert to torch tensors before passing to learner
-        camera_obs_tensor = torch.as_tensor(camera_obs, dtype=torch.float32, device=device)
-        state_tensor = torch.as_tensor(state, dtype=torch.float32, device=device)
-
-        # Add batch dimension if missing
-        if camera_obs_tensor.ndim == 2:  # (n_agents, obs_dim)
-            camera_obs_tensor = camera_obs_tensor.unsqueeze(0)  # -> (1, n_agents, obs_dim)
-        if state_tensor.ndim == 1:  # (state_dim)
-            state_tensor = state_tensor.unsqueeze(0)  # -> (1, state_dim)
+    for timestep in range(start_timestep, total_timesteps):
+        # Convert to torch tensors before passing to learner (nếu cần, nhưng select_action dùng numpy)
+        # Add batch dimension if missing - nhưng ở đây select_action dùng numpy trực tiếp
 
         # Select actions
         camera_actions, action_info = learner.select_action(camera_obs, state)
@@ -243,7 +248,6 @@ def train_qplex(config: Dict[str, Any], logger: logging.Logger):
         
         # Combine actions
         actions = (camera_actions, target_actions)
-        # print("actions shape:", np.array(actions).shape)
 
         # Step environment
         next_obs, rewards, terminated, truncated, info = env.step(actions)
@@ -328,7 +332,7 @@ def train_qplex(config: Dict[str, Any], logger: logging.Logger):
                 json.dump(eval_results, f, indent=2)
         
         # Save model
-        if timestep % save_interval == 0 and timestep > 0:
+        if timestep % save_interval == 0 and timestep > start_timestep:
             model_file = os.path.join(model_dir, f'qplex_model_{timestep}.pth')
             learner.save(model_file)
             logger.info(f"Model saved to {model_file}")
@@ -369,6 +373,8 @@ def main():
                        help='Logging level')
     parser.add_argument('--seed', type=int, default=None,
                        help='Random seed (overrides config)')
+    parser.add_argument('--resume', type=str, default=None,  # <-- THÊM DÒNG NÀY
+                       help='Path to checkpoint to resume from (e.g., qplex_model_40000.pth)')
     
     args = parser.parse_args()
     
@@ -386,9 +392,11 @@ def main():
     logger.info("Starting QPLEX training on MATE environment")
     logger.info(f"Configuration: {args.config}")
     logger.info(f"Seed: {config.get('seed', 42)}")
+    if args.resume:  # <-- THÊM DÒNG NÀY
+        logger.info(f"Resuming from checkpoint: {args.resume}")
     
     try:
-        train_qplex(config, logger)
+        train_qplex(config, logger, resume_path=args.resume)  # <-- THÊM resume_path VÀO HÀM
     except KeyboardInterrupt:
         logger.info("Training interrupted by user")
     except Exception as e:
