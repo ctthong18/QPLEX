@@ -1,12 +1,12 @@
 {
-  "mean_episode_reward": 497.55263157894734,
-  "std_episode_reward": 148.45585864747477,
-  "mean_episode_length": 1946.4736842105262,
-  "mean_loss": 18824765814.912,
-  "mean_q_values": 0.8348721227496863,
-  "mean_td_error": 1.0453761401176453,
-  "mean_epsilon": 0.16951360494497147,
-  "timestep": 78001,
-  "episode_count": 38,
-  "buffer_size": 10000
+  "mean_episode_reward": 510.94871794871796,
+  "std_episode_reward": 141.46222631047243,
+  "mean_episode_length": 1922.179487179487,
+  "mean_loss": 1138738199.56,
+  "mean_q_values": -0.4356338996887207,
+  "mean_td_error": 0.4043447625115514,
+  "mean_epsilon": 0.05000000000000001,
+  "timestep": 158001,
+  "episode_count": 78,
+  "buffer_size": 40000
 }
